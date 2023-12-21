@@ -40,7 +40,8 @@ interface PersonalityProfile {
 
 const fetchCategories = async (): Promise<string[]> => {
     const authToken = localStorage.getItem('authToken');
-    const response = await fetch('http://localhost:8000/api/categories/', {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const response = await fetch(`${backendUrl}api/categories/`, {
         method: 'GET',
         headers: {
             'Authorization': `Token ${authToken}`,
@@ -57,8 +58,9 @@ const fetchCategories = async (): Promise<string[]> => {
 const fetchSimilarGroups = async (tags: string[]): Promise<SimilarUser[]> => {
     const username = localStorage.getItem('username');
     const authToken = localStorage.getItem('authToken');
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
     const tagsQueryString = tags.map(tag => `tags=${encodeURIComponent(tag)}`).join('&');
-    const url = `http://localhost:8000/api/similar-groups/${username}/?${tagsQueryString}`;
+    const url = `${backendUrl}api/similar-groups/${username}/?${tagsQueryString}`;
   
     const response = await fetch(url, {
       method: 'GET',
@@ -77,8 +79,9 @@ const fetchSimilarGroups = async (tags: string[]): Promise<SimilarUser[]> => {
 const fetchSimilarUsers = async (tags: string[]): Promise<SimilarUser[]> => {
     const username = localStorage.getItem('username');
     const authToken = localStorage.getItem('authToken');
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
     const tagsQueryString = tags.map(tag => `tags=${encodeURIComponent(tag)}`).join('&');
-    const url = `http://localhost:8000/api/similar-users/${username}/?${tagsQueryString}`;
+    const url = `${backendUrl}api/similar-users/${username}/?${tagsQueryString}`;
   
     const response = await fetch(url, {
       method: 'GET',
@@ -97,7 +100,8 @@ const fetchSimilarUsers = async (tags: string[]): Promise<SimilarUser[]> => {
 // Fetch recommendations based on the selected category and optional username
 const fetchRecommendations = async (category: string, username?: string): Promise<Recommendation[]> => {
     const authToken = localStorage.getItem('authToken');
-    let url = `http://localhost:8000/api/recommendations/${category}/`;
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    let url = `${backendUrl}api/recommendations/${category}/`;
   
     // If a username is provided, append it as a query parameter
     if (username) {
@@ -121,7 +125,8 @@ const fetchRecommendations = async (category: string, username?: string): Promis
 const fetchWordRankings = async (): Promise<{ top_words: WordScore[], bottom_words: WordScore[] }> => {
     const username = localStorage.getItem('username');
     const authToken = localStorage.getItem('authToken');
-    const response = await fetch(`http://localhost:8000/api/user/${username}/top-bottom-words/10/`, {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const response = await fetch(`${backendUrl}api/user/${username}/top-bottom-words/10/`, {
         method: 'GET',
         headers: {
             'Authorization': `Token ${authToken}`,
@@ -137,7 +142,8 @@ const fetchWordRankings = async (): Promise<{ top_words: WordScore[], bottom_wor
 
 const fetchPersonalityProfile = async (): Promise<PersonalityProfile> => {
     const authToken = localStorage.getItem('authToken');
-    const response = await fetch('http://localhost:8000/api/personality-profile/', {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const response = await fetch(`${backendUrl}api/personality-profile/`, {
         method: 'GET',
         headers: {
             'Authorization': `Token ${authToken}`,

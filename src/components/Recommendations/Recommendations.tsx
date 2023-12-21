@@ -17,7 +17,8 @@ interface User {
 // Fetch a list of usernames from the backend
 const fetchUsernames = async (): Promise<User[]> => {
   const authToken = localStorage.getItem('authToken');
-  const response = await fetch('http://localhost:8000/api/usernames/', {
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  const response = await fetch(`${backendUrl}api/usernames/`, {
     method: 'GET',
     headers: {
       'Authorization': `Token ${authToken}`,
@@ -34,7 +35,8 @@ const fetchUsernames = async (): Promise<User[]> => {
 
 const fetchCategories = async (): Promise<string[]> => {
   const authToken = localStorage.getItem('authToken');
-  const response = await fetch('http://localhost:8000/api/categories/', {
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  const response = await fetch(`${backendUrl}api/categories/`, {
       method: 'GET',
       headers: {
           'Authorization': `Token ${authToken}`,
@@ -51,7 +53,8 @@ const fetchCategories = async (): Promise<string[]> => {
 // Fetch recommendations based on the selected category and optional username
 const fetchRecommendations = async (category: string, username?: string): Promise<any> => {
   const authToken = localStorage.getItem('authToken');
-  let url = `http://localhost:8000/api/recommendations/${category}/`;
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  let url = `${backendUrl}api/recommendations/${category}/`;
 
   // If a username is provided, append it as a query parameter
   if (username) {
@@ -74,7 +77,8 @@ const fetchRecommendations = async (category: string, username?: string): Promis
 
 const fetchCategoryRecommendations = async (category: string): Promise<any> => {
   const authToken = localStorage.getItem('authToken');
-  const response = await fetch(`http://localhost:8000/api/categories/${category}/`, {
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  const response = await fetch(`${backendUrl}api/categories/${category}/`, {
     method: 'GET',
     headers: {
       'Authorization': `Token ${authToken}`,
@@ -91,7 +95,8 @@ const fetchCategoryRecommendations = async (category: string): Promise<any> => {
 
 const fetchUsersScores = async (recommendation: string): Promise<any> => {
   const authToken = localStorage.getItem('authToken');
-  const response = await fetch(`http://localhost:8000/api/recommendation-user-scores/${recommendation}/`, {
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  const response = await fetch(`${backendUrl}api/recommendation-user-scores/${recommendation}/`, {
     method: 'GET',
     headers: {
       'Authorization': `Token ${authToken}`,

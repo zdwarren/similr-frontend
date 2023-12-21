@@ -14,7 +14,8 @@ const SuggestPromptModal: React.FC<SuggestPromptModalProps> = ({ isVisible, onCl
 
     const mutation = useMutation((newPrompt: { template_text: string }) => {
         const authToken = localStorage.getItem('authToken');
-        return fetch('http://localhost:8000/api/suggest-prompt-template/', {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL;
+        return fetch(`${backendUrl}api/suggest-prompt-template/`, {
             method: 'POST',
             headers: {
                 'Authorization': `Token ${authToken}`,

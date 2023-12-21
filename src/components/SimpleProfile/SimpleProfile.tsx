@@ -17,7 +17,8 @@ interface UserData {
 const fetchUserData = async (): Promise<UserData> => {
     try {
       const authToken = localStorage.getItem('authToken');
-      const response = await fetch('http://localhost:8000/api/my-profile/', {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}api/my-profile/`, {
           method: 'GET',
           headers: {
               'Authorization': `Token ${authToken}`,

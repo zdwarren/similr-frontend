@@ -16,7 +16,8 @@ interface User {
 // Fetch a list of usernames from the backend
 const fetchUsernames = async (): Promise<User[]> => {
     const authToken = localStorage.getItem('authToken');
-    const response = await fetch('http://localhost:8000/api/usernames/', {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const response = await fetch(`${backendUrl}api/usernames/`, {
       method: 'GET',
       headers: {
         'Authorization': `Token ${authToken}`,
@@ -48,7 +49,8 @@ const PredictChoice = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/predict-choice/', {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}api/predict-choice/`, {
         method: 'POST',
         headers: {
           'Authorization': `Token ${localStorage.getItem('authToken')}`,

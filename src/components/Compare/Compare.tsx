@@ -44,7 +44,8 @@ interface ChartDataType {
 
 const fetchTags = async (): Promise<string[]> => {
     const authToken = localStorage.getItem('authToken');
-    const response = await fetch('http://localhost:8000/api/tags/', {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const response = await fetch(`${backendUrl}api/tags/`, {
         method: 'GET',
         headers: {
         'Authorization': `Token ${authToken}`,
@@ -60,7 +61,8 @@ const fetchTags = async (): Promise<string[]> => {
 
 const fetchCategories = async (): Promise<string[]> => {
     const authToken = localStorage.getItem('authToken');
-    const response = await fetch('http://localhost:8000/api/categories/', {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const response = await fetch(`${backendUrl}api/categories/`, {
         method: 'GET',
         headers: {
             'Authorization': `Token ${authToken}`,
@@ -76,7 +78,6 @@ const fetchCategories = async (): Promise<string[]> => {
 
 const fetchGroupRecommendations = async (url: string) => {
     const authToken = localStorage.getItem('authToken');
-  
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -218,7 +219,8 @@ const ComparePage = () => {
             return;
         }
         try {
-            const url = `http://localhost:8000/api/group-recommendations/${selectedCategory}/${selectedTag}?includeSelf=${includeSelf}`;
+            const backendUrl = process.env.REACT_APP_BACKEND_URL;
+            const url = `${backendUrl}api/group-recommendations/${selectedCategory}/${selectedTag}?includeSelf=${includeSelf}`;
             const fetchedData = await fetchGroupRecommendations(url);
             const parsedData: any = parseGroupRecommendations(fetchedData);
             setGroupRecommendations(parsedData); // parsedData should be an object with labels and datasets

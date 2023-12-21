@@ -29,7 +29,8 @@ interface User {
 
 const fetchUsernames = async (): Promise<User[]> => {
   const authToken = localStorage.getItem('authToken');
-  const response = await fetch('http://localhost:8000/api/usernames/', {
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  const response = await fetch(`${backendUrl}api/usernames/`, {
     method: 'GET',
     headers: {
       'Authorization': `Token ${authToken}`,
@@ -45,7 +46,8 @@ const fetchUsernames = async (): Promise<User[]> => {
 
 const fetchTags = async (): Promise<string[]> => {
   const authToken = localStorage.getItem('authToken');
-  const response = await fetch('http://localhost:8000/api/tags/', {
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  const response = await fetch(`${backendUrl}api/tags/`, {
     method: 'GET',
     headers: {
       'Authorization': `Token ${authToken}`,
@@ -61,9 +63,10 @@ const fetchTags = async (): Promise<string[]> => {
 
 const fetchTSNEData = async (tags: string[]): Promise<TSNEPoint[]> => {
   const authToken = localStorage.getItem('authToken');
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
   // Construct the tags part of the query string
   const tagsQueryString = tags.map(tag => `tags=${encodeURIComponent(tag)}`).join('&');
-  const response = await fetch(`http://localhost:8000/api/tsne/?${tagsQueryString}`, {
+  const response = await fetch(`${backendUrl}api/tsne/?${tagsQueryString}`, {
     method: 'GET',
     headers: {
       'Authorization': `Token ${authToken}`,
@@ -79,8 +82,9 @@ const fetchTSNEData = async (tags: string[]): Promise<TSNEPoint[]> => {
 
 const fetchSimilarUsers = async (username: string, tags: string[]) => {
   const authToken = localStorage.getItem('authToken');
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
   const tagsQueryString = tags.map(tag => `tags=${encodeURIComponent(tag)}`).join('&');
-  const url = `http://localhost:8000/api/similar-users/${username}/?${tagsQueryString}`;
+  const url = `${backendUrl}api/similar-users/${username}/?${tagsQueryString}`;
 
   const response = await fetch(url, {
     method: 'GET',

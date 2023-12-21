@@ -36,7 +36,8 @@ interface OptionPair {
 
 const postUserChoice = async (userChoice: { option_pair: string; choice: string; }) => {
     const authToken = localStorage.getItem('authToken');
-    const response = await fetch('http://localhost:8000/api/user-choices/', {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const response = await fetch(`${backendUrl}api/user-choices`, {
         method: 'POST',
         headers: {
             'Authorization': `Token ${authToken}`,
@@ -54,7 +55,8 @@ const postUserChoice = async (userChoice: { option_pair: string; choice: string;
 
 const fetchPromptTemplates = async (): Promise<PromptTemplate[]> => {
     const authToken = localStorage.getItem('authToken');
-    const response = await fetch('http://localhost:8000/api/prompt-templates/', {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const response = await fetch(`${backendUrl}api/prompt-templates/`, {
         method: 'GET',
         headers: {
             'Authorization': `Token ${authToken}`,
@@ -77,7 +79,8 @@ const RapidFire: React.FC = () => {
 
     const fetchNextOptionPair = async (): Promise<OptionPair> => {
         const authToken = localStorage.getItem('authToken');
-        let url = `http://localhost:8000/api/option-pairs/next/?retainPrompt=${retainPrompt}`;
+        const backendUrl = process.env.REACT_APP_BACKEND_URL;
+        let url = `${backendUrl}api/option-pairs/next/?retainPrompt=${retainPrompt}`;
         if (selectedPromptTemplateId) {
             url += `&promptTemplateId=${selectedPromptTemplateId}`;
         }
@@ -178,7 +181,8 @@ const RapidFire: React.FC = () => {
     const handleThumbsUp = async (type: 'prompt' | 'option', id: string) => {
         const authToken = localStorage.getItem('authToken');
         try {
-            const response = await fetch(`http://localhost:8000/api/${type}/${id}/thumbs-up/`, {
+            const backendUrl = process.env.REACT_APP_BACKEND_URL;
+            const response = await fetch(`${backendUrl}api/${type}/${id}/thumbs-up/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Token ${authToken}`,
@@ -198,7 +202,8 @@ const RapidFire: React.FC = () => {
     const handleThumbsDown = async (type: 'prompt' | 'option', id: string) => {
         const authToken = localStorage.getItem('authToken');
         try {
-            const response = await fetch(`http://localhost:8000/api/${type}/${id}/thumbs-down/`, {
+            const backendUrl = process.env.REACT_APP_BACKEND_URL;
+            const response = await fetch(`${backendUrl}api/${type}/${id}/thumbs-down/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Token ${authToken}`,

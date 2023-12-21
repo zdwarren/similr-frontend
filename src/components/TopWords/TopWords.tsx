@@ -15,8 +15,9 @@ interface WordScore {
 }
 
 const fetchUsernames = async (): Promise<User[]> => {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
     const authToken = localStorage.getItem('authToken');
-    const response = await fetch('http://localhost:8000/api/usernames/', {
+    const response = await fetch(`${backendUrl}api/usernames/`, {
         method: 'GET',
         headers: {
             'Authorization': `Token ${authToken}`,
@@ -33,7 +34,8 @@ const fetchUsernames = async (): Promise<User[]> => {
 
 const fetchTopBottomWords = async (username: string, topX: number): Promise<{ top_words: WordScore[], bottom_words: WordScore[] }> => {
     const authToken = localStorage.getItem('authToken');
-    const response = await fetch(`http://localhost:8000/api/user/${username}/top-bottom-words/${topX}/`, {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const response = await fetch(`${backendUrl}api/user/${username}/top-bottom-words/${topX}/`, {
         method: 'GET',
         headers: {
             'Authorization': `Token ${authToken}`,

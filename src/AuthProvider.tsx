@@ -21,7 +21,8 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const login = (username: string, password: string): Promise<void> => {
         return new Promise(async (resolve, reject) => {
             try {
-                const response = await axios.post('http://localhost:8000/api/api-token-auth/', {
+                const backendUrl = process.env.REACT_APP_BACKEND_URL;
+                const response = await axios.post(`${backendUrl}api/api-token-auth/`, {
                     username,
                     password,
                 });
@@ -47,7 +48,8 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const signup = async (username: string, password: string) => {
         try {
-            const response = await axios.post('http://localhost:8000/api/signup/', {
+            const backendUrl = process.env.REACT_APP_BACKEND_URL;
+            const response = await axios.post(`${backendUrl}api/signup/`, {
                 username,
                 password,
             });
