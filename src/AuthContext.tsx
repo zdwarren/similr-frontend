@@ -7,7 +7,7 @@ interface AuthContextInterface {
     username: string | null;
     login: (username: string, password: string) => Promise<void>;
     logout: () => void;
-    signup: (username: string, password: string) => Promise<void>;
+    signup: (username: string, password: string, signupCode: string) => Promise<void>;
 }
 
 // Create a context with default values

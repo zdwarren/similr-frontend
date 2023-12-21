@@ -8,12 +8,14 @@ import HeaderComponent from './HeaderComponent'; // Ensure this path is correct
 const SignupForm: React.FC = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [signupCode, setSignupCode] = useState('');
+
     const authContext = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        authContext.signup(username, password).then(() => navigate('/rapidfire'));
+        authContext.signup(username, password, signupCode).then(() => navigate('/rapidfire'));
     };
 
     return (
@@ -25,6 +27,16 @@ const SignupForm: React.FC = () => {
                         Create Your Account
                     </h2>
                     <Form onSubmitCapture={handleSubmit} layout="vertical">
+                        <Form.Item
+                            name="signupCode"
+                            rules={[{ required: true, message: 'Please input your Signup Code!' }]}
+                        >
+                            <Input
+                                placeholder="Beta Signup Code"
+                                value={signupCode}
+                                onChange={(e) => setSignupCode(e.target.value)}
+                            />
+                        </Form.Item>
                         <Form.Item
                             name="username"
                             rules={[{ required: true, message: 'Please input your Username!' }]}

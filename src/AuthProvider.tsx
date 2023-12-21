@@ -46,12 +46,13 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
     };
 
-    const signup = async (username: string, password: string) => {
+    const signup = async (username: string, password: string, signupCode: string) => {
         try {
             const backendUrl = process.env.REACT_APP_BACKEND_URL;
             const response = await axios.post(`${backendUrl}api/signup/`, {
                 username,
                 password,
+                signupCode,
             });
 
             if (response.data && response.data.token) {
