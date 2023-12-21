@@ -1,10 +1,10 @@
 import React from 'react';
 import Card, { CardType } from './Card';
-import { Row, Col } from 'antd';
+import { Button, Collapse, Dropdown, Menu } from 'antd';
+import MoreOutlined from '@ant-design/icons/lib/icons/MoreOutlined';
 
-// Define ProfileCanvasProps interface
 interface ProfileCanvasProps {
-    cards: CardType[];  // we're reusing the Card interface defined earlier
+    cards: CardType[];
     handleEdit: (card: CardType) => void;
     handleDelete: (card: CardType) => void;
     handleDuplicate: (card: CardType) => void;
@@ -13,14 +13,42 @@ interface ProfileCanvasProps {
 
 const ProfileCanvas: React.FC<ProfileCanvasProps> = ({ cards, handleEdit, handleDelete, handleDuplicate, handleVariations }) => {
     return (
-        <Row gutter={[16, 16]}>
-            {cards.map(card => (
-                <Col xs={24} sm={24} md={12} lg={12} xl={8} key={`${card.id}-${card.title}-${card.content}`}>
-                    <Card card={card} handleEdit={handleEdit} handleDelete={handleDelete}
-                        handleDuplicate={handleDuplicate} handleVariations={handleVariations} />
-                </Col>
-            ))}
-        </Row>
+        <Collapse accordion>
+            {cards.map(card => {
+                const menu = (
+                    <Menu>
+                        <Menu.Item key="1" onClick={() => handleEdit(card)}>
+                            Edit
+                        </Menu.Item>
+                        <Menu.Item key="2" onClick={() => handleDuplicate(card)}>
+                            Duplicate
+                        </Menu.Item>
+                        <Menu.Item key="3" onClick={() => handleVariations(card)}>
+                            Variations
+                        </Menu.Item>
+                        <Menu.Item key="4" onClick={() => handleDelete(card)}>
+                            Delete
+                        </Menu.Item>
+                    </Menu>
+                );
+
+                return (
+                    <Collapse.Panel 
+                        header={
+                            <>
+                                {card.title}
+                                {/* <Dropdown overlay={menu} trigger={['click']}>
+                                    <Button type="text" icon={<MoreOutlined />} />
+                                </Dropdown> */}
+                            </>
+                        }
+                        key={card.id}
+                    >
+                        <Card card={card} handleEdit={handleEdit} handleDelete={handleDelete} handleDuplicate={handleDuplicate} handleVariations={handleVariations} />
+                    </Collapse.Panel>
+                )
+            })}
+        </Collapse>
     );
 };
 

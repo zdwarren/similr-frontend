@@ -98,25 +98,10 @@ const Card: React.FC<CardProps> = ({ card, handleEdit, handleDelete, handleDupli
     }
 
     return (
-        <div>
-            <AntCard
-                className="m-4 bg-white shadow-lg overflow-auto"
-                style={{ width: 250, height: 250, boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)' }}
-                bodyStyle={{ padding: 10 }}
-                title={title}
-                extra={
-                    <Dropdown overlay={menu} trigger={['click']}>
-                        <Button type="text" icon={<MoreOutlined />} onClick={e => e.preventDefault()} />
-                    </Dropdown>
-                }
-            >
-                <div className="text-sm whitespace-pre-wrap overflow-auto" style={{ overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: '7', WebkitBoxOrient: 'vertical' }}>{content}</div>
-                <a href="#" onClick={showModal} style={{ textDecoration: 'none', color: 'blue' }}>show more</a>
-            </AntCard>
-
-            <Modal title={title} visible={isModalVisible} onCancel={handleModalCancel} footer={[null]}>
-                <p className="text-sm whitespace-pre-wrap overflow-auto">{content}</p>
-            </Modal>
+        <div className="text-sm whitespace-pre-wrap overflow-auto">
+            <div>
+                {content}
+            </div>
         </div>
     );
 

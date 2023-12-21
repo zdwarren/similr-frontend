@@ -41,3 +41,12 @@
     transform: rotate(360deg);
   }
 }
+
+.form-container {
+  max-width: 600px; /* or whatever width you prefer */
+  margin: 0 auto; /* centers the form in the middle of the page */
+  padding: 20px; /* adds some spacing inside the container */
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* optional: adds a subtle shadow for depth */
+  border-radius: 8px; /* optional: rounds the corners */
+  background-color: white; /* optional: sets a background color */
+}

@@ -5,11 +5,16 @@ import LoginForm from './components/LoginForm';
 import AuthProvider from './AuthProvider';
 import { AuthContext } from './AuthContext';
 import Landing from './components/Landing';
-import ProfileCreate from './components/ProfileCreate/ProfileCreate';
-import UserChat from './components/UserChat/UserChat';
-import Matches from './components/Matches/Matches';
 import SignupForm from './components/SignupForm';
-import MatchPage from './components/Admin/MatchPage';
+import RapidFire from './components/RapidFire/RapidFire';
+import Similr from './components/Similr/Similr';
+import SimpleProfile from './components/SimpleProfile/SimpleProfile';
+import Recommendation from './components/Recommendations/Recommendations';
+import PredictChoice from './components/PredictChoice/PredictChoice';
+import TopWords from './components/TopWords/TopWords';
+import MeetPeople from './components/MeetPeople/MeetPeople';
+import WhoAmI from './components/WhoAmI/WhoAmI';
+import Compare from './components/Compare/Compare';
 
 const queryClient = new QueryClient();
 
@@ -34,13 +39,18 @@ const AppRoutes: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={isLoggedIn ? <Navigate to="/matches" /> : <Landing />} />
-        <Route path="/profile" element={isLoggedIn ? <ProfileCreate /> : <Navigate to="/login" />} />
-        <Route path="/chat" element={isLoggedIn ? <UserChat /> : <Navigate to="/login" />} />
-        <Route path="/matches" element={isLoggedIn ? <Matches /> : <Navigate to="/login" />} />
+        <Route path="/" element={isLoggedIn ? <Navigate to="/rapidfire" /> : <Landing />} />
+        <Route path="/profile" element={isLoggedIn ? <SimpleProfile /> : <Navigate to="/login" />} />
+        <Route path="/rapidfire" element={isLoggedIn ? <RapidFire /> : <Navigate to="/login" />} />
+        <Route path="/whoami" element={isLoggedIn ? <WhoAmI /> : <Navigate to="/login" />} />
+        <Route path="/compare" element={isLoggedIn ? <Compare /> : <Navigate to="/login" />} />
+        <Route path="/similr" element={isLoggedIn ? <Similr /> : <Navigate to="/login" />} />
+        <Route path="/recommendations" element={isLoggedIn ? <Recommendation /> : <Navigate to="/login" />} />
+        <Route path="/predict-choice" element={isLoggedIn ? <PredictChoice /> : <Navigate to="/login" />} />
+        <Route path="/topwords" element={isLoggedIn ? <TopWords /> : <Navigate to="/login" />} />
+        <Route path="/meetpeople" element={isLoggedIn ? <MeetPeople /> : <Navigate to="/login" />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/signup" element={<SignupForm />} />
-        <Route path="/admin" element={isAdmin ? <MatchPage /> : <Navigate to="/login" />} /> {/* Add this line */}
       </Routes>
     </Router>
   );
