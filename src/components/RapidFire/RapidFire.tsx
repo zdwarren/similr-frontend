@@ -37,7 +37,7 @@ interface OptionPair {
 const postUserChoice = async (userChoice: { option_pair: string; choice: string; }) => {
     const authToken = localStorage.getItem('authToken');
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
-    const response = await fetch(`${backendUrl}api/user-choices`, {
+    const response = await fetch(`${backendUrl}api/user-choices/`, {
         method: 'POST',
         headers: {
             'Authorization': `Token ${authToken}`,
