@@ -7,12 +7,6 @@ const { Option } = Select;
 
 const { Title, Paragraph } = Typography;
 
-// Interfaces for the data structures
-interface UserSimilarity {
-    // Example fields, adjust as needed
-    similarityScore: number;
-    group: string;
-}
 
 interface Recommendation {
     title: string;
@@ -163,7 +157,6 @@ const WhoAmI = () => {
     const {
         data: personalityProfile,
         isLoading: isLoadingProfile,
-        status: profileStatus
     } = useQuery('personalityProfile', fetchPersonalityProfile);
 
     const [selectedCategory, setSelectedCategory] = useState('General Personality');

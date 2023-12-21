@@ -98,7 +98,7 @@ const RapidFire: React.FC = () => {
         return data;
     };
 
-    const { data: currentPair, error, isLoading, refetch: refetchNextPair } = useQuery('optionPair', fetchNextOptionPair, {
+    const { data: currentPair, error, refetch: refetchNextPair } = useQuery('optionPair', fetchNextOptionPair, {
         enabled: false,
         onSuccess: () => setIsLoadingPair(false),
         onError: () => setIsLoadingPair(false),
@@ -119,7 +119,7 @@ const RapidFire: React.FC = () => {
             // Update previousAccuracy
             setPreviousAccuracy(currentPair.current_accuracy);
         }
-    }, [currentPair?.current_accuracy]);
+    }, [currentPair?.current_accuracy, currentPair, previousAccuracy]);
         
     const mutation = useMutation(postUserChoice, {
         onMutate: () => {

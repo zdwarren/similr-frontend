@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
 import { Select, Card, Row, Col, Typography, Spin, Button, Checkbox } from 'antd';
-import { Radar, Bar, Doughnut, PolarArea } from 'react-chartjs-2';
-import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend, CategoryScale, LinearScale, BarElement, ArcElement, PolarAreaController, ChartData } from 'chart.js';
+import { Radar, Bar, } from 'react-chartjs-2';
+import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend, CategoryScale, LinearScale, BarElement, ArcElement, PolarAreaController } from 'chart.js';
 import HeaderComponent from '../HeaderComponent';
 import Plot from 'react-plotly.js';
 
@@ -11,12 +10,6 @@ const { Title } = Typography;
 
 // Register components for different chart types
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend, CategoryScale, LinearScale, BarElement, ArcElement, PolarAreaController);
-
-// TypeScript interfaces for type safety
-interface GroupMember {
-    name: string;
-    personalityTrait: string;
-}
 
 interface Recommendation {
     rec_id: number;

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Typography, Button, Row, Col, Image, Divider, Card, Alert } from 'antd';
+import { Typography, Button, Row, Col, Image, Divider, Alert } from 'antd';
 import HeaderComponent from './HeaderComponent';
 import { AuthContext } from '../AuthContext';
 

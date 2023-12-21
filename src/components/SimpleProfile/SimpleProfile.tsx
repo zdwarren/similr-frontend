@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery, useMutation } from 'react-query';
 import moment from 'moment';
 import HeaderComponent from '../HeaderComponent';
 
 import { Form, Input, Button, Select, DatePicker, Checkbox, Space, Row, Col, Tooltip, message } from 'antd';
 import { UserOutlined, CalendarOutlined } from '@ant-design/icons';
-
-const { Option } = Select;
 
 
 interface UserData {

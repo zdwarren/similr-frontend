@@ -144,7 +144,7 @@ const Similr = () => {
     }
   };
   
-  const { data: usernames, isLoading: usernamesIsLoading, error: usernamesError } = useQuery('usernames', fetchUsernames);
+  const { data: usernames } = useQuery('usernames', fetchUsernames);
 
   // UseQuery for TSNE Data
   const tsneQuery = useQuery(['tsneData', selectedTags], () => fetchTSNEData(selectedTags), {

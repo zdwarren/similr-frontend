@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Scatter } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title,
                   Tooltip, Legend, ScatterController, ScatterDataPoint } from 'chart.js';
@@ -40,7 +40,6 @@ interface SimilrChartProps {
 
 const SimilrChart = ({ data }: SimilrChartProps) => {
   const currentUser = localStorage.getItem('username');
-  const [legendItems, setLegendItems] = useState<{ title: string, color: string }[]>([]);
 
   // Create a map of usernames to profile data
   const profileMap = new Map<string, any>();

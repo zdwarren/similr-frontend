@@ -59,7 +59,7 @@ const PredictChoice = () => {
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
       const choice = data.choice[0].toUpperCase() + data.choice.slice(1);
-      setModelChoice(data.choice);
+      setModelChoice(choice);
       
       // Save similarity scores in the state
       setLrSimilarity((data.lr_similarity * 1000).toFixed(0));

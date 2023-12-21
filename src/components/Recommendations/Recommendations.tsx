@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { Select, Spin, Card, Alert, Button, Popover } from 'antd';
+import { Select, Spin, Popover } from 'antd';
 import HeaderComponent from '../HeaderComponent';
 import RecommendationsList from './RecommendationList';
 import UsersScoresList from './UsersScoresList';

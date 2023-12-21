@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Button, Input } from 'antd';
+import { Modal, Input } from 'antd';
 import { useMutation } from 'react-query';
 
 const { TextArea } = Input;
