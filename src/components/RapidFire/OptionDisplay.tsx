@@ -40,7 +40,7 @@ const OptionDisplay: React.FC<OptionDisplayProps> = ({
     const cardStyle: React.CSSProperties = {
         margin: '20px',
         width: '100%',
-        maxWidth: '300px',
+        maxWidth: '350px',
         minHeight: '150px',
         display: 'flex',
         //alignItems: 'center', // Align items vertically in the center
@@ -113,7 +113,7 @@ const OptionDisplay: React.FC<OptionDisplayProps> = ({
                     <img 
                         src={optionImageUrl} 
                         alt={option} 
-                        style={{ width: '250px', height: '250px', marginBottom: '10px' }} 
+                        style={{ width: '300px', height: '300px', marginBottom: '10px' }} 
                     />
                 )}
                 <p style={textStyle}>{option}</p>

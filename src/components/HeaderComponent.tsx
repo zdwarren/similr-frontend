@@ -15,39 +15,49 @@ const HeaderComponent: React.FC = () => {
 
     return (
         <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ flex: 0, color: 'white', fontSize: '24px' }}>
+            <div style={{ color: 'white', fontSize: '24px' }}>
                 <Link to="/">
                     {/* <img src="path_to_your_logo.png" alt="Logo" style={{ height: '64px' }} /> */}
                     <h1>Similr.ai</h1>
                 </Link>
             </div>
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={selectedKeys} className="header-menu">
+            <Menu
+                style={{
+                    fontSize: '16px',
+                    width: '100%',
+                    display: 'flex', 
+                    justifyContent: 'center', // Centers items
+                }}
+                theme="dark"
+                mode="horizontal"
+                defaultSelectedKeys={selectedKeys}>
+
                 {/* <Menu.Item key="/profile">
                     <Link to="/profile">Profile</Link>
                 </Menu.Item> */}
                 <Menu.Item key="/rapidfire">
-                    <Link to="/rapidfire">Rapid Fire</Link>
+                    <Link to="/rapidfire">Questions</Link>
                 </Menu.Item>
-                <Menu.Item key="/whoami">
-                    <Link to="/whoami">Who Am I</Link>
+                <Menu.Item key="/profile">
+                    <Link to="/profile">Profile</Link>
                 </Menu.Item>
                 <Menu.Item key="/compare">
-                    <Link to="/compare">Compare</Link>
+                    <Link to="/compare">Groups</Link>
                 </Menu.Item>
                 <Menu.Item key="/similr">
                     <Link to="/similr">Similr</Link>
                 </Menu.Item>
                 <Menu.Item key="/recommendations">
-                    <Link to="/recommendations">Recommendations</Link>
+                    <Link to="/recommendations">Recs</Link>
                 </Menu.Item>
                 <Menu.Item key="/predict-choice">
-                    <Link to="/predict-choice">Predict Choice</Link>
+                    <Link to="/predict-choice">Predict</Link>
                 </Menu.Item>
                 <Menu.Item key="/topwords">
-                    <Link to="/topwords">Top Words</Link>
+                    <Link to="/topwords">Words</Link>
                 </Menu.Item>
                 <Menu.Item key="/meetpeople">
-                    <Link to="/meetpeople">Meet People</Link>
+                    <Link to="/meetpeople">Meet</Link>
                 </Menu.Item>
                 {isLoggedIn ? (
                     <Menu.Item key="/logout" icon={<UserOutlined />} onClick={logout} className="menu-item-logout">
@@ -63,7 +73,7 @@ const HeaderComponent: React.FC = () => {
                     </>
                 )}
             </Menu>
-            <div style={{ flex: 0, textAlign: 'right', paddingRight: '10px' }}>
+            <div style={{ textAlign: 'right', paddingRight: '10px' }}>
                 <span style={{ color: 'lightgray', fontWeight: 'bold', fontSize: '18px' }}>Beta</span>
             </div>
         </Header>

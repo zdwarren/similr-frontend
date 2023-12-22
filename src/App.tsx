@@ -40,9 +40,9 @@ const AppRoutes: React.FC = () => {
     <Router>
       <Routes>
         <Route path="/" element={isLoggedIn ? <Navigate to="/rapidfire" /> : <Landing />} />
-        <Route path="/profile" element={isLoggedIn ? <SimpleProfile /> : <Navigate to="/login" />} />
+        {/* <Route path="/profile" element={isLoggedIn ? <SimpleProfile /> : <Navigate to="/login" />} /> */}
         <Route path="/rapidfire" element={isLoggedIn ? <RapidFire /> : <Navigate to="/login" />} />
-        <Route path="/whoami" element={isLoggedIn ? <WhoAmI /> : <Navigate to="/login" />} />
+        <Route path="/profile" element={isLoggedIn ? <WhoAmI /> : <Navigate to="/login" />} />
         <Route path="/compare" element={isLoggedIn ? <Compare /> : <Navigate to="/login" />} />
         <Route path="/similr" element={isLoggedIn ? <Similr /> : <Navigate to="/login" />} />
         <Route path="/recommendations" element={isLoggedIn ? <Recommendation /> : <Navigate to="/login" />} />

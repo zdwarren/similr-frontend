@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Row, Col, Spin, Checkbox, Progress, message, Select, Popover } from 'antd';
+import { Button, Row, Col, Spin, Checkbox, Collapse, Progress, message, Select, Popover } from 'antd';
 import OptionDisplay from './OptionDisplay'; // Importing OptionDisplay
 import HeaderComponent from '../HeaderComponent';
 import { useMutation, useQuery } from 'react-query';
 import SuggestPromptModal from './SuggestPromptModal';
-import { DislikeOutlined, LikeOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { DislikeOutlined, LikeOutlined, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
 
+const { Panel } = Collapse;
 const { Option } = Select;
 
 interface PromptTemplate {
@@ -76,6 +77,7 @@ const RapidFire: React.FC = () => {
     const [retainPrompt, setRetainPrompt] = useState(false); // State for checkbox
     const [previousAccuracy, setPreviousAccuracy] = useState<number | null>(null);
     const [selectedPromptTemplateId, setSelectedPromptTemplateId] = useState<string | null>(null);
+    const [showSettings, setShowSettings] = useState(false);
 
     const fetchNextOptionPair = async (): Promise<OptionPair> => {
         const authToken = localStorage.getItem('authToken');
@@ -236,6 +238,11 @@ const RapidFire: React.FC = () => {
             <p><strong>It's learning about you!</strong></p>
         </div>
     );
+    
+    // Function to toggle settings visibility
+    const toggleSettings = () => {
+        setShowSettings(!showSettings);
+    };
 
     if (error) {
         return <div>Error</div>;
@@ -244,8 +251,31 @@ const RapidFire: React.FC = () => {
     return (
         <>
             <HeaderComponent />
-            <div style={{ padding: '20px' }}>                
-                <Row gutter={16} justify="center" style={{ marginBottom: '20px' }}>
+            <div style={{ padding: '20px' }}>
+                {showSettings && (
+                    <Row gutter={16} justify="center" style={{ marginBottom: '20px' }}>
+                        <Col xs={24} sm={16} md={12} lg={10}>
+                            <div style={{ background: '#f0f2f5', padding: '20px', borderRadius: '8px' }}>
+                                <Checkbox
+                                    checked={retainPrompt}
+                                    onChange={e => setRetainPrompt(e.target.checked)}
+                                >
+                                    Retain this prompt template
+                                </Checkbox>
+                                <Button
+                                    onClick={handleOpenModal}
+                                    size="small"
+                                >
+                                    Suggest Prompt
+                                </Button>
+                                <div style={{ marginTop: '10px' }}>
+                                    {renderPromptTemplateDropdown()}
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
+                )}
+                {/* <Row gutter={16} justify="center" style={{ marginBottom: '20px' }}>
                     <Col xs={16} sm={12} md={10} lg={8}>
                         <div style={{ textAlign: 'center', fontSize: '16px', position: 'relative' }}>
                             Current Accuracy: {previousAccuracy !== null && typeof previousAccuracy === 'number'
@@ -256,9 +286,11 @@ const RapidFire: React.FC = () => {
                             </Popover>
                         </div>
                     </Col>
-                </Row>
+                </Row> */}
                 <Row gutter={16} justify="center" style={{ marginBottom: '20px' }}>
-                    <Col xs={16} sm={12} md={10} lg={8}>
+                    <Col xs={2} sm={2} md={2} lg={2}>
+                    </Col>
+                    <Col xs={20} sm={18} md={16} lg={12}>
                         {currentPair && (
                             <Progress
                                 percent={Math.round(currentPair.progress)}
@@ -267,31 +299,11 @@ const RapidFire: React.FC = () => {
                             />
                         )}
                     </Col>
-                </Row>
-                <Row gutter={16} justify="center" style={{ marginBottom: '20px' }}>
-                    <Col xs={24} sm={16} md={12} lg={10}>
-                        <div style={{ textAlign: 'center' }}>
-                            <Checkbox
-                                checked={retainPrompt}
-                                onChange={e => setRetainPrompt(e.target.checked)}
-                                style={{ marginRight: '10px' }}
-                            >
-                                Retain this prompt template
-                            </Checkbox>
-                            <Button
-                                onClick={handleOpenModal}
-                                size="small"
-                            >
-                                Suggest Prompt
-                            </Button>
-                        </div>
-                    </Col>
-                </Row>
-                <Row gutter={16} justify="center" style={{ marginBottom: '20px' }}>
-                    <Col xs={24} sm={16} md={12} lg={10}>
-                        <div style={{ textAlign: 'center' }}>
-                            {renderPromptTemplateDropdown()}
-                        </div>
+                    <Col xs={4} sm={6} md={8} lg={2} style={{ textAlign: 'right' }}>
+                        <SettingOutlined onClick={toggleSettings} style={{ fontSize: '22px', cursor: 'pointer' }} />
+                        <Popover content={helpContent} title="How to Use This Page">
+                                <QuestionCircleOutlined style={{ marginLeft: '10px', cursor: 'pointer', position: 'relative', top: '-4px' }} />
+                        </Popover>
                     </Col>
                 </Row>
                 <Row gutter={16} justify="center" style={{ marginBottom: '20px' }}>
@@ -304,7 +316,7 @@ const RapidFire: React.FC = () => {
 
                     {/* Column for Thumbs Up/Down Buttons */}
                     <Col xs={6} sm={5} md={4} lg={2}>
-                        <div style={{ textAlign: 'center' }}>
+                        <div style={{ textAlign: 'left' }}>
                             {currentPair && (
                                 <>
                                     <Button
@@ -321,7 +333,7 @@ const RapidFire: React.FC = () => {
                         </div>
                     </Col>
                 </Row>
-                <Row gutter={16} justify="center">
+                <Row justify="center" style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
                     {currentPair ? (
                         <>
                             <OptionDisplay
@@ -334,6 +346,7 @@ const RapidFire: React.FC = () => {
                                 famousUsername={currentPair?.left_famous_username}
                                 onClick={() => handleChoice('left')}
                             />
+                             <Button size="large" type="dashed" style={{ margin: '0 -10px' }} onClick={() => handleChoice('skip')}>Skip</Button>
                             <OptionDisplay
                                 option={currentPair?.right || 'Loading...'}
                                 optionImageUrl={currentPair?.right_image_url || ''}
@@ -349,7 +362,18 @@ const RapidFire: React.FC = () => {
                         <Spin size="large" />
                     )}
                 </Row>
-                <Row gutter={16} justify="center" style={{ marginTop: '10px' }}>
+                <Row gutter={64} justify="center" style={{ marginTop: '20px' }}>
+                    {/* <Col>
+                        <Button type="primary" onClick={() => handleChoice('left')}>Left</Button>
+                    </Col> */}
+                    {/* <Col>
+                        <Button type="default" onClick={() => handleChoice('skip')}>Skip</Button>
+                    </Col> */}
+                    {/* <Col>
+                        <Button type="primary" onClick={() => handleChoice('right')}>Right</Button>
+                    </Col> */}
+                </Row>
+                <Row gutter={16} justify="center" style={{ marginTop: '0px' }}>
                     <Col>
                         {currentPair && (
                             <>
@@ -364,17 +388,6 @@ const RapidFire: React.FC = () => {
                                 />
                             </>
                         )}
-                    </Col>
-                </Row>
-                <Row gutter={16} justify="center" style={{ marginTop: '20px' }}>
-                    <Col>
-                        <Button type="primary" onClick={() => handleChoice('left')}>Left</Button>
-                    </Col>
-                    <Col>
-                        <Button type="default" onClick={() => handleChoice('skip')}>Skip</Button>
-                    </Col>
-                    <Col>
-                        <Button type="primary" onClick={() => handleChoice('right')}>Right</Button>
                     </Col>
                 </Row>
             </div>
