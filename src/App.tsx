@@ -8,7 +8,6 @@ import Landing from './components/Landing';
 import SignupForm from './components/SignupForm';
 import RapidFire from './components/RapidFire/RapidFire';
 import Similr from './components/Similr/Similr';
-import SimpleProfile from './components/SimpleProfile/SimpleProfile';
 import Recommendation from './components/Recommendations/Recommendations';
 import PredictChoice from './components/PredictChoice/PredictChoice';
 import TopWords from './components/TopWords/TopWords';

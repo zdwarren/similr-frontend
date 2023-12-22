@@ -6,7 +6,6 @@ import { useMutation, useQuery } from 'react-query';
 import SuggestPromptModal from './SuggestPromptModal';
 import { DislikeOutlined, LikeOutlined, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
 
-const { Panel } = Collapse;
 const { Option } = Select;
 
 interface PromptTemplate {
