@@ -31,6 +31,9 @@ const HeaderComponent: React.FC = () => {
                 <Menu.Item key="/whoami">
                     <Link to="/whoami">Who Am I</Link>
                 </Menu.Item>
+                <Menu.Item key="/compare">
+                    <Link to="/compare">Compare</Link>
+                </Menu.Item>
                 <Menu.Item key="/similr">
                     <Link to="/similr">Similr</Link>
                 </Menu.Item>
