@@ -90,7 +90,7 @@ const UserProfile = () => {
                 <Col span={24}>
                 {userInfo.personalityTags.map(tag => (
                     <Tooltip title={tag.description} key={tag.title}>
-                        <Badge size="small" count={(tag.score * 1000).toFixed(0)} offset={[-8, 5]} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
+                        <Badge size="small" count={(tag.score * 1000).toFixed(0)} offset={[-15, 5]} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
                             <Tag color="blue" style={largerTagStyle}>{tag.title}</Tag>
                         </Badge>
                     </Tooltip>
@@ -99,7 +99,7 @@ const UserProfile = () => {
                 <Col span={24}>
                     {userInfo.careerTags.map(tag => (
                         <Tooltip title={tag.description} key={tag.title}>
-                            <Badge size="small" count={(tag.score * 1000).toFixed(0)} offset={[-8, 5]} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
+                            <Badge size="small" count={(tag.score * 1000).toFixed(0)} offset={[-15, 5]} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
                                 <Tag color="green" style={largerTagStyle}>{tag.title}</Tag>
                             </Badge>
                         </Tooltip>
@@ -108,7 +108,7 @@ const UserProfile = () => {
                 <Col span={24}>
                     <strong>Hogwarts House: </strong>
                     <Tooltip title={userInfo.hogwartsHouse.description} key={userInfo.hogwartsHouse.title}>
-                        <Badge size="small" count={(userInfo.hogwartsHouse.score * 1000).toFixed(0)} offset={[-8, 5]} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
+                        <Badge size="small" count={(userInfo.hogwartsHouse.score * 1000).toFixed(0)} offset={[-15, 5]} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
                             <Tag color="green" style={largerTagStyle}>{userInfo.hogwartsHouse.title}</Tag>
                         </Badge>
                     </Tooltip>
@@ -117,7 +117,7 @@ const UserProfile = () => {
                     <strong>D&D: </strong>
                     {userInfo.dnd.map(tag => (
                         <Tooltip title={tag.description} key={tag.title}>
-                            <Badge size="small" count={(tag.score * 1000).toFixed(0)} offset={[-8, 5]} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
+                            <Badge size="small" count={(tag.score * 1000).toFixed(0)} offset={[-15, 5]} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
                                 <Tag color="green" style={largerTagStyle}>{tag.title}</Tag>
                             </Badge>
                         </Tooltip>
