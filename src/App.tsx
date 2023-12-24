@@ -14,6 +14,7 @@ import TopWords from './components/TopWords/TopWords';
 import MeetPeople from './components/MeetPeople/MeetPeople';
 import WhoAmI from './components/WhoAmI/WhoAmI';
 import Compare from './components/Compare/Compare';
+import SimilrChartPage from './components/SimilrChart/SimilrChartPage';
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/profile" element={isLoggedIn ? <WhoAmI /> : <Navigate to="/login" />} />
         <Route path="/compare" element={isLoggedIn ? <Compare /> : <Navigate to="/login" />} />
         <Route path="/similr" element={isLoggedIn ? <Similr /> : <Navigate to="/login" />} />
+        <Route path="/similr-chart" element={isLoggedIn ? <SimilrChartPage /> : <Navigate to="/login" />} />
         <Route path="/recommendations" element={isLoggedIn ? <Recommendation /> : <Navigate to="/login" />} />
         <Route path="/predict-choice" element={isLoggedIn ? <PredictChoice /> : <Navigate to="/login" />} />
         <Route path="/topwords" element={isLoggedIn ? <TopWords /> : <Navigate to="/login" />} />

@@ -279,7 +279,6 @@ const ComparePage = () => {
                             value={selectedTag}
                             >
                             {tags
-                                .filter(tag => !tag.is_private) // Optional: Display only public tags
                                 .sort((a, b) => a.name.localeCompare(b.name)) // Sort tags by name
                                 .map(tag => (
                                 <Option key={tag.name} value={tag.name}>{tag.name}</Option>

@@ -48,7 +48,10 @@ const HeaderComponent: React.FC = () => {
                             <Link to="/compare">Groups</Link>
                         </Menu.Item>
                         <Menu.Item key="/similr">
-                            <Link to="/similr">Similr</Link>
+                            <Link to="/similr">Table</Link>
+                        </Menu.Item>
+                        <Menu.Item key="/similr-chart">
+                            <Link to="/similr-chart">Chart</Link>
                         </Menu.Item>
                         <Menu.Item key="/recommendations">
                             <Link to="/recommendations">Recs</Link>

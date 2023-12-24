@@ -1,25 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Select, Tooltip, Button, Spin, Popover } from 'antd';
+import { Select, Tooltip, Button, Spin, Popover } from 'antd';
 import { Table } from 'antd';
 import { useQuery } from 'react-query';
-import SimilrChart from './SimilrChart';
 import HeaderComponent from '../HeaderComponent';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
-
-interface TSNEPoint {
-  username: string;
-  x: number;
-  y: number;
-  z: number;
-  profile: any;
-  top_recommendation: {
-    title: string;
-    description: string;
-    score: number;
-  };
-}
 
 interface User {
   name: any;
@@ -53,26 +39,6 @@ const fetchTags = async (): Promise<Tag[]> => {
   const authToken = localStorage.getItem('authToken');
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
   const response = await fetch(`${backendUrl}api/tags/`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Token ${authToken}`,
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
-};
-
-
-const fetchTSNEData = async (tags: string[]): Promise<TSNEPoint[]> => {
-  const authToken = localStorage.getItem('authToken');
-  const backendUrl = process.env.REACT_APP_BACKEND_URL;
-  // Construct the tags part of the query string
-  const tagsQueryString = tags.map(tag => `tags=${encodeURIComponent(tag)}`).join('&');
-  const response = await fetch(`${backendUrl}api/tsne/?${tagsQueryString}`, {
     method: 'GET',
     headers: {
       'Authorization': `Token ${authToken}`,
@@ -125,7 +91,7 @@ const columns = [
     },
   },
   {
-    title: 'Similarity Score',
+    title: 'Similr Score',
     dataIndex: 'score',
     key: 'score',
     render: (text: number) => (text * 100).toFixed(0),
@@ -155,11 +121,6 @@ const Similr = () => {
   };
   
   const { data: usernames } = useQuery('usernames', fetchUsernames);
-
-  // UseQuery for TSNE Data
-  const tsneQuery = useQuery(['tsneData', selectedTags], () => fetchTSNEData(selectedTags), {
-    enabled: fetchData
-  });
 
   // UseQuery for Similar Users Data
   const similarQuery = useQuery(['similarData', selectedUsername, selectedTags], () => fetchSimilarUsers(selectedUsername, selectedTags), {
@@ -200,7 +161,6 @@ const Similr = () => {
   )
 
   // Check for loading or error states
-  if (tsneQuery.isError) return <p>Error loading TSNE data</p>;
   if (similarQuery.isError) return <p>Error loading similarity data</p>;
 
   return (
@@ -246,7 +206,7 @@ const Similr = () => {
         </div>
         <div style={{
           display: 'inline-block',
-          width: '500px',
+          width: '400px',
           border: '1px solid #ddd',
           borderRadius: '4px',
           padding: '10px',
@@ -265,15 +225,6 @@ const Similr = () => {
           )}
         </div>
       </div>
-      <Row gutter={[16, 16]} style={{ margin: '10px', paddingBottom: '20px' }}>
-        {tsneQuery.data && (
-          <Col xs={48} sm={24}>
-            <div style={{ marginLeft: '10px', marginRight: '10px', marginTop: '10px', marginBottom: '0', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }}>
-              <SimilrChart data={tsneQuery.data} />
-            </div>
-          </Col>
-        )}
-      </Row>
     </>
   );  
 };

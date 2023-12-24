@@ -194,11 +194,12 @@ const SimilrChart = ({ data }: SimilrChartProps) => {
   );
 
   return (
-    <>
+    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <CustomLegend />
-      <Scatter data={chartData} options={options} />    
-    </>
+      <Scatter data={chartData} options={options} />
+    </div>
   );
+  
 };
 
 export default SimilrChart;
