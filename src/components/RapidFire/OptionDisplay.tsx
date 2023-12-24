@@ -16,43 +16,62 @@ const OptionDisplay: React.FC<OptionDisplayProps> = ({
     option,
     optionImageUrl,
     isLoading,
-    relativeSimilarity,
-    absoluteSimilarity,
+    // relativeSimilarity,
+    // absoluteSimilarity,
     historicalPercent,
     famousUsername,
     onClick }) => {
     
     // Determine the color and text based on similarity value
-    const similarityColor = relativeSimilarity >= 0 ? 'green' : 'red';
-    let similarityText = '';
-    if (relativeSimilarity < 0) {
-        similarityText = '';
-    } else if (relativeSimilarity * 100 < 5) {
-        similarityText = 'Toss Up';
-    } else if (relativeSimilarity * 100 > 20) {
-        similarityText = 'Very Confident';
-    } else if (relativeSimilarity * 100 > 10) {
-        similarityText = 'Confident';
-    } else {
-        similarityText = 'Lean';
-    }
+    // const similarityColor = relativeSimilarity >= 0 ? 'green' : 'red';
+    // let similarityText = '';
+    // if (relativeSimilarity < 0) {
+    //     similarityText = '';
+    // } else if (relativeSimilarity * 100 < 5) {
+    //     similarityText = 'Toss Up';
+    // } else if (relativeSimilarity * 100 > 20) {
+    //     similarityText = 'Very Confident';
+    // } else if (relativeSimilarity * 100 > 10) {
+    //     similarityText = 'Confident';
+    // } else {
+    //     similarityText = 'Lean';
+    // }
 
     const cardStyle: React.CSSProperties = {
         margin: '20px',
-        width: '100%',
-        maxWidth: '350px',
-        minHeight: '150px',
+        width: '350px', // Fixed width
+        height: '450px', // Fixed height to accommodate image/text and spinner
         display: 'flex',
-        //alignItems: 'center', // Align items vertically in the center
-        justifyContent: 'center', // Align items horizontally in the center
+        flexDirection: 'column', // Stack children vertically
+        alignItems: 'center', // Horizontally center children
+        justifyContent: 'center', // Vertically center children
         fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
         cursor: 'pointer',
+        overflow: 'hidden', // Ensure contents don't overflow
+    };
+
+    // Container for image to reserve the space
+    const imageContainerStyle: React.CSSProperties = {
+        height: '300px', // Fixed height matching the max image height
+        width: '100%', // Full width of the card
+        backgroundColor: '#f0f0f0', // A light grey placeholder color, adjust as needed
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    };
+
+    // Adjusted image style for consistent display
+    const imageStyle: React.CSSProperties = {
+        maxWidth: '100%', // Ensure it doesn't exceed container's width
+        maxHeight: '100%', // Ensure it doesn't exceed container's height
+        objectFit: 'cover', // Cover the area without stretching
     };
 
     const textStyle: React.CSSProperties = {
         textAlign: 'center',
         width: '100%',
-        fontSize: '16px', // Increase font size
+        marginTop: '15px',
+        fontSize: '18px', // Increase font size
         fontWeight: '500', // Medium font weight, you can use 600 or 700 for bolder text
     };
 
@@ -68,7 +87,7 @@ const OptionDisplay: React.FC<OptionDisplayProps> = ({
     const similarityStyle: React.CSSProperties = {
         marginTop: '30px',
         fontSize: '14px',
-        color: similarityColor,
+        // color: similarityColor,
     };
 
     const spinnerContainerStyle: React.CSSProperties = {
@@ -84,17 +103,17 @@ const OptionDisplay: React.FC<OptionDisplayProps> = ({
     if (isLoading) {
         cardContent = (
             <div style={spinnerContainerStyle}>
-                <Spin />
+                <Spin size='large' />
                 {option && (
                     <div style={similarityStyle}>
-                        <div style={{ fontSize: '14px', width: '100%', textAlign: 'center'}}>
+                        {/* <div style={{ fontSize: '14px', width: '100%', textAlign: 'center'}}>
                             {(relativeSimilarity * 1000).toFixed(0)}
                             {`  (${(absoluteSimilarity * 1000).toFixed(0)})`}
                             {similarityText && ` - ${similarityText}`}
-                        </div>
+                        </div> */}
                         {
                             (historicalPercent !== 0 && historicalPercent !== 100) && (
-                                <div style={{ marginTop: '30px', fontSize: '16px', width: '100%', textAlign: 'center', color: 'rgba(0, 0, 0, 0.88)' }}>
+                                <div style={{ marginTop: '10px', fontSize: '24px', width: '100%', textAlign: 'center', color: 'rgba(0, 0, 0, 0.88)' }}>
                                 {historicalPercent.toFixed(0)}%
                                 <br />
                                 {famousUsername}
@@ -108,14 +127,16 @@ const OptionDisplay: React.FC<OptionDisplayProps> = ({
         );
     } else {
         cardContent = (
-            <div>
-                {optionImageUrl && (
-                    <img 
-                        src={optionImageUrl} 
-                        alt={option} 
-                        style={{ width: '300px', height: '300px', marginBottom: '10px' }} 
-                    />
-                )}
+            <div style={{width: '100%'}}>
+                <div style={imageContainerStyle}>
+                    {optionImageUrl && (
+                        <img 
+                            src={optionImageUrl} 
+                            alt={option} 
+                            style={imageStyle} 
+                        />
+                    )}
+                </div>
                 <p style={textStyle}>{option}</p>
             </div>
         );

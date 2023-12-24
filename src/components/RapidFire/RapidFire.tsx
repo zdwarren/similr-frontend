@@ -26,6 +26,7 @@ interface OptionPair {
     r_similarity: number;
     prompt_template_id: string;
     prompt_template: string;
+    display_text: string;
     progress: number,
     total_answered: number,
     milestone: number,
@@ -74,7 +75,7 @@ const fetchPromptTemplates = async (): Promise<PromptTemplate[]> => {
 const RapidFire: React.FC = () => {    
     const [isLoadingPair, setIsLoadingPair] = useState(false);
     const [retainPrompt, setRetainPrompt] = useState(false); // State for checkbox
-    const [previousAccuracy, setPreviousAccuracy] = useState<number | null>(null);
+    // const [previousAccuracy, setPreviousAccuracy] = useState<number | null>(null);
     const [selectedPromptTemplateId, setSelectedPromptTemplateId] = useState<string | null>(null);
     const [showSettings, setShowSettings] = useState(false);
 
@@ -112,28 +113,31 @@ const RapidFire: React.FC = () => {
         refetchNextPair();
     }, [refetchNextPair, selectedPromptTemplateId]);
     
-    useEffect(() => {
-        // Check if current_accuracy is a number and not NaN
-        if (currentPair && typeof currentPair.current_accuracy === 'number' && !isNaN(currentPair.current_accuracy)) {
-            if (previousAccuracy !== null && currentPair.current_accuracy - previousAccuracy !== 0) {
-                const accuracyChange = (currentPair.current_accuracy - previousAccuracy) * 100;
-                const changeAmount = accuracyChange >= 0 ? `increased by ${accuracyChange.toFixed(2)}` : `decreased by ${(-accuracyChange).toFixed(2)}`;
-                message.info(`Accuracy has ${changeAmount}%`);
-            }
-            // Update previousAccuracy
-            setPreviousAccuracy(currentPair.current_accuracy);
-        }
-    }, [currentPair?.current_accuracy, currentPair, previousAccuracy]);
+    // useEffect(() => {
+    //     // Check if current_accuracy is a number and not NaN
+    //     if (currentPair && typeof currentPair.current_accuracy === 'number' && !isNaN(currentPair.current_accuracy)) {
+    //         if (previousAccuracy !== null && currentPair.current_accuracy - previousAccuracy !== 0) {
+    //             const accuracyChange = (currentPair.current_accuracy - previousAccuracy) * 100;
+    //             const changeAmount = accuracyChange >= 0 ? `increased by ${accuracyChange.toFixed(2)}` : `decreased by ${(-accuracyChange).toFixed(2)}`;
+    //             message.info(`Accuracy has ${changeAmount}%`);
+    //         }
+    //         // Update previousAccuracy
+    //         setPreviousAccuracy(currentPair.current_accuracy);
+    //     }
+    // }, [currentPair?.current_accuracy, currentPair, previousAccuracy]);
         
     const mutation = useMutation(postUserChoice, {
         onMutate: () => {
             setIsLoadingPair(true); // Set loading state when mutation starts
         },
         onSuccess: () => {
-            refetchNextPair();
+            // Delay the next action by 500ms
+            setTimeout(() => {
+                refetchNextPair();
+                // Make sure to set loading state back to false if necessary
+            }, 1000); // 500ms delay
         },
     });
-
         
     // Inside your component
     const { data: promptTemplates } = useQuery('promptTemplates', fetchPromptTemplates);
@@ -223,18 +227,16 @@ const RapidFire: React.FC = () => {
     
     // Popover content
     const helpContent = (
-        <div>
-            <p>Click <strong>Left</strong> or <strong>Right</strong> or click on the image to make your choice.</p>
+        <div style={{ width: '600px'}}>
+            <p>Click on the image to make your choice.</p>
+            <br></br>
             <p>If you absolutely have no preference or don't understand the question, feel free to <strong>Skip</strong>. Try to answer at least 100 pairs, but the more you answer, the better!</p>
             <br></br>
-            <p>The <strong>thumbs up/down</strong> at the top is for rating the prompt template used to generate options, while the bottom thumbs up/down is for rating the options themselves.</p>
-            <p>You can ignore the 'Retain this prompt template' and 'Select prompt' unless you want a specific category of questions.</p>
+            <p>The <strong>thumbs up/down</strong> is for rating the options.  If you think it's a bad choice or confusing or the images are bad give it a thumbs down.</p>
             <br></br>
-            <p>After you've clicked it will show you the model's guess of your pick, the overall % for all people who have answered and it might show a famous person's selection!</p>
+            <p>After you've clicked it will show you the overall % for all people who have answered and it might show a famous person's selection.</p>
             <br></br>
-            <p>The model will try to guess your answer (Toss Up, Lean, Confident, Very Confident) and should be around 65% after you've answered a few.</p>
-            <br></br>
-            <p><strong>It's learning about you!</strong></p>
+            <p>Once you've answered enough questions click on <strong>Profile</strong> to see your analysis!</p>
         </div>
     );
     
@@ -305,17 +307,17 @@ const RapidFire: React.FC = () => {
                         </Popover>
                     </Col>
                 </Row>
-                <Row gutter={16} justify="center" style={{ marginBottom: '20px' }}>
+                <Row gutter={16} justify="center" style={{ marginBottom: '10px' }}>
                     {/* Column for Prompt Template */}
-                    <Col xs={24} sm={12} md={10} lg={10}>
-                        <div style={{ textAlign: 'center', marginBottom: '10px', fontSize: '16px', fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', }}>
-                            {currentPair?.prompt_template}
+                    <Col xs={24} sm={24} md={20} lg={11} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+     
+                        {/* Div for Centered Text directly above Option Displays */}
+                        <div style={{ textAlign: 'center', fontSize: '20px', fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', flex: 1, marginRight: '10px' }}>
+                            {currentPair?.display_text || currentPair?.prompt_template}
                         </div>
-                    </Col>
 
-                    {/* Column for Thumbs Up/Down Buttons */}
-                    <Col xs={6} sm={5} md={4} lg={2}>
-                        <div style={{ textAlign: 'left' }}>
+                        {/* Div for Thumbs Up/Down Buttons aligned to right
+                        <div>
                             {currentPair && (
                                 <>
                                     <Button
@@ -329,7 +331,7 @@ const RapidFire: React.FC = () => {
                                     />
                                 </>
                             )}
-                        </div>
+                        </div> */}
                     </Col>
                 </Row>
                 <Row justify="center" style={{ width: '100%', display: 'flex', alignItems: 'center' }}>

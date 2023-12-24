@@ -2,15 +2,18 @@ import React, { useContext } from 'react';
 import { Typography, Button, Row, Col, Image, Divider, Alert } from 'antd';
 import HeaderComponent from './HeaderComponent';
 import { AuthContext } from '../AuthContext';
+import { Link } from 'react-router-dom';
 
 const { Title, Paragraph } = Typography;
 
 const Landing: React.FC = () => {
     const { isLoggedIn, username } = useContext(AuthContext);
 
-    const renderSectionButton = (text: string, link: string) => (
+    const renderSectionButton = (text: string) => (
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <Button type="primary" size="large" href={link}>{text}</Button>
+            <Button type="primary" size="large">
+                <Link to="/signup">{text}</Link>
+            </Button>
         </div>
     );
 
@@ -26,9 +29,7 @@ const Landing: React.FC = () => {
                         `Embark on an exciting journey of self-discovery and shared experiences with Similr.ai, the social app that’s redefining personal understanding and connection.`
                     )}
                 </Paragraph>
-                <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                    <Button type="primary" size="large" href="http://localhost:3000/signup">Join Similr.ai Today!</Button>
-                </div>
+                {renderSectionButton('Join Similr.ai Today!')}
                 <div style={{ marginTop: '20px' }}>
                     <Alert
                         style={{ fontSize: '16px' }}
@@ -66,7 +67,7 @@ const Landing: React.FC = () => {
                         From uncovering hidden traits to mapping out your preferences, Similr.ai
                         provides insightful and tailored personality profiles.
                         </Paragraph>
-                        {renderSectionButton('Discover Your Personality', 'http://localhost:3000/signup')}
+                        {renderSectionButton('Discover Your Personality')}
                     </Col>
                 </Row>
                 <Divider />
@@ -77,7 +78,7 @@ const Landing: React.FC = () => {
                         Step into a world of personalized recommendations spanning products, careers,
                         travel destinations, and more, all aligned with your personality.
                         </Paragraph>
-                        {renderSectionButton('Explore Recommendations', 'http://localhost:3000/signup')}
+                        {renderSectionButton('Explore Recommendations')}
                     </Col>
                     <Col span={12}>
                         <Image
@@ -103,7 +104,7 @@ const Landing: React.FC = () => {
                         Understand your group's dynamics, discover similarities and differences, and deepen your
                         connections. Similr.ai makes social interactions more insightful and engaging.
                         </Paragraph>
-                        {renderSectionButton('Connect with Others', 'http://localhost:3000/signup')}
+                        {renderSectionButton('Connect with Others')}
                     </Col>
                 </Row>
                 <Divider />

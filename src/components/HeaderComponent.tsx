@@ -12,6 +12,7 @@ const HeaderComponent: React.FC = () => {
 
     // Get the current path and use it to set the selected menu item
     const selectedKeys = [location.pathname];
+    const isRoot = location.pathname === '/';
 
     return (
         <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -32,33 +33,37 @@ const HeaderComponent: React.FC = () => {
                 mode="horizontal"
                 defaultSelectedKeys={selectedKeys}>
 
-                {/* <Menu.Item key="/profile">
-                    <Link to="/profile">Profile</Link>
-                </Menu.Item> */}
-                <Menu.Item key="/rapidfire">
-                    <Link to="/rapidfire">Questions</Link>
-                </Menu.Item>
-                <Menu.Item key="/profile">
-                    <Link to="/profile">Profile</Link>
-                </Menu.Item>
-                <Menu.Item key="/compare">
-                    <Link to="/compare">Groups</Link>
-                </Menu.Item>
-                <Menu.Item key="/similr">
-                    <Link to="/similr">Similr</Link>
-                </Menu.Item>
-                <Menu.Item key="/recommendations">
-                    <Link to="/recommendations">Recs</Link>
-                </Menu.Item>
-                <Menu.Item key="/predict-choice">
-                    <Link to="/predict-choice">Predict</Link>
-                </Menu.Item>
-                <Menu.Item key="/topwords">
-                    <Link to="/topwords">Words</Link>
-                </Menu.Item>
-                <Menu.Item key="/meetpeople">
-                    <Link to="/meetpeople">Meet</Link>
-                </Menu.Item>
+                {(!isRoot || isLoggedIn) && (
+                    <>
+                        {/* <Menu.Item key="/profile">
+                            <Link to="/profile">Profile</Link>
+                        </Menu.Item> */}
+                        <Menu.Item key="/rapidfire">
+                            <Link to="/rapidfire">Questions</Link>
+                        </Menu.Item>
+                        <Menu.Item key="/profile">
+                            <Link to="/profile">Profile</Link>
+                        </Menu.Item>
+                        <Menu.Item key="/compare">
+                            <Link to="/compare">Groups</Link>
+                        </Menu.Item>
+                        <Menu.Item key="/similr">
+                            <Link to="/similr">Similr</Link>
+                        </Menu.Item>
+                        <Menu.Item key="/recommendations">
+                            <Link to="/recommendations">Recs</Link>
+                        </Menu.Item>
+                        <Menu.Item key="/predict-choice">
+                            <Link to="/predict-choice">Predict</Link>
+                        </Menu.Item>
+                        <Menu.Item key="/topwords">
+                            <Link to="/topwords">Words</Link>
+                        </Menu.Item>
+                        <Menu.Item key="/meetpeople">
+                            <Link to="/meetpeople">Meet</Link>
+                        </Menu.Item>
+                    </>
+                )}
                 {isLoggedIn ? (
                     <Menu.Item key="/logout" icon={<UserOutlined />} onClick={logout} className="menu-item-logout">
                         {username} (Logout)

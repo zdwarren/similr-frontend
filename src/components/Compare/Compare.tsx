@@ -42,23 +42,28 @@ interface ChartDataType {
     }[];
 }
 
-const fetchTags = async (): Promise<string[]> => {
+interface Tag {
+    name: string;
+    is_private: boolean;
+  }
+  
+  const fetchTags = async (): Promise<Tag[]> => {
     const authToken = localStorage.getItem('authToken');
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
     const response = await fetch(`${backendUrl}api/tags/`, {
-        method: 'GET',
-        headers: {
+      method: 'GET',
+      headers: {
         'Authorization': `Token ${authToken}`,
         'Content-Type': 'application/json',
-        },
+      },
     });
-
+  
     if (!response.ok) {
-        throw new Error('Network response was not ok');
+      throw new Error('Network response was not ok');
     }
     return response.json();
-};
-
+  };
+  
 const fetchCategories = async (): Promise<string[]> => {
     const authToken = localStorage.getItem('authToken');
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
@@ -102,7 +107,7 @@ const ComparePage = () => {
     const [selectedTag, setSelectedTag] = useState<string>('');
     const [selectedCategory, setSelectedCategory] = useState<string>('');
 
-    const [tags, setTags] = useState<string[]>([]);
+    const [tags, setTags] = useState<Tag[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
     const [includeSelf, setIncludeSelf] = useState(false);
 
@@ -272,11 +277,14 @@ const ComparePage = () => {
                             placeholder="Select tags"
                             onChange={setSelectedTag}
                             value={selectedTag}
-                        >
-                            {tags.sort().map(tag => (
-                            <Option key={tag} value={tag}>{tag}</Option>
+                            >
+                            {tags
+                                .filter(tag => !tag.is_private) // Optional: Display only public tags
+                                .sort((a, b) => a.name.localeCompare(b.name)) // Sort tags by name
+                                .map(tag => (
+                                <Option key={tag.name} value={tag.name}>{tag.name}</Option>
                             ))}
-                        </Select>
+                            </Select>
                     </Col>
                     <Col span={4}>
                         <Title level={4}>Select Category</Title>
