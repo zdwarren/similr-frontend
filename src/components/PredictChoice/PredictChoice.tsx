@@ -60,8 +60,8 @@ const PredictChoice = () => {
       });
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
-      const choice = data.choice[0].toUpperCase() + data.choice.slice(1);
-      setModelChoice(choice);
+      // const choice = data.choice[0].toUpperCase() + data.choice.slice(1);
+      setModelChoice(data.choice);
       
       // Save similarity scores in the state
       setLrSimilarity((data.lr_similarity * 1000).toFixed(0));
@@ -126,7 +126,7 @@ const PredictChoice = () => {
                       <br /><br />
                       <Row gutter={[16, 16]} align="middle" style={{ marginTop: '20px' }}>
                           <Col span={4} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                              <div style={{ fontSize: '18px', textAlign: 'center' }}>
+                              <div style={{ fontSize: '18px', textAlign: 'center', color: getBorderColor('right') }}>
                                   {rlSimilarity}<br/>{rSimilarity}
                               </div>
                           </Col>
@@ -137,7 +137,7 @@ const PredictChoice = () => {
                       <br />
                       <Row gutter={[16, 16]} align="middle" style={{ marginTop: '20px' }}>
                           <Col span={4} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                              <div style={{ fontSize: '18px', textAlign: 'center' }}>
+                              <div style={{ fontSize: '18px', textAlign: 'center', color: getBorderColor('left') }}>
                                   {lrSimilarity}<br/>{lSimilarity}
                               </div>
                           </Col>

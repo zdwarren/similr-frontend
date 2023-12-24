@@ -102,7 +102,7 @@ const SimilrChart = ({ data }: SimilrChartProps) => {
   // Create datasets
   const datasets: ChartDataset<'scatter', ScatterDataPoint[]>[] = data.map(user => {
     const baseColor = colorMap[user.top_recommendation.title] || 'rgba(0, 0, 0, '; // Fallback color
-    const opacity = 1; //Math.min(user.top_recommendation.score * 2000000, 1); // Adjust opacity based on score
+    const opacity = 1;
     const color = `${baseColor}${opacity})`;
 
     return {

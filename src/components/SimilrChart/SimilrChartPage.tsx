@@ -1,6 +1,6 @@
 // SimilrChartPage.tsx
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Select, Spin, Button } from 'antd';
+import { Row, Col, Select, Button, message, Progress } from 'antd';
 import { useQuery } from 'react-query';
 import SimilrChart from './SimilrChart';
 import HeaderComponent from '../HeaderComponent';
@@ -66,18 +66,21 @@ const fetchTags = async (): Promise<Tag[]> => {
   const SimilrChartPage = () => {
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [tags, setTags] = useState<Tag[]>([]);
-    const [fetchData, setFetchData] = useState(true);
-  
+    const [fetchData, setFetchData] = useState(false);  
+    const [hasTimedOut, setHasTimedOut] = useState(false);
+    
+    const [elapsedSeconds, setElapsedSeconds] = useState(0);
     const [chartData, setChartData] = useState<TSNEPoint[] | null>(null); // New state to hold chart data
 
-    
-    // UseQuery for TSNE Data
+    // Update TSNE query to depend only on fetchData
     const tsneQuery = useQuery(['tsneData', selectedTags], () => fetchTSNEData(selectedTags), {
-        enabled: fetchData,
-        onSuccess: (data) => {
-        // Update chart data when new data is fetched successfully
+      enabled: fetchData,  // Ensure query only runs when fetchData is true
+      onSuccess: (data) => {
         setChartData(data);
-        },
+        setFetchData(false); // Reset fetchData to false after successful fetch
+        setElapsedSeconds(0); // Reset timer
+        setHasTimedOut(false); // Reset timeout state
+      },
     });
 
     useEffect(() => {
@@ -94,16 +97,35 @@ const fetchTags = async (): Promise<Tag[]> => {
       fetchTagsData();
     }, []);
   
-    // Reset fetchData to false after queries have been triggered
+   
     useEffect(() => {
+      let interval: NodeJS.Timeout;
       if (fetchData) {
-        setFetchData(false);
+        setElapsedSeconds(0); // Reset timer
+        setHasTimedOut(false); // Reset timeout state
+        interval = setInterval(() => {
+          setElapsedSeconds(prev => {
+            if (prev < 30) return prev + 1; // Increment seconds until 30
+            clearInterval(interval); // Clear interval after 30 seconds
+            return prev;
+          });
+        }, 1000); // Update every second
       }
+      return () => clearInterval(interval); // Cleanup the interval
     }, [fetchData]);
-    
-    // Handle 'Fetch Data' button click
+
+    // Determine the percentage for the Progress component
+    const progressPercent = (elapsedSeconds / 30) * 100;
+      
+      
     const handleFetchData = () => {
+      if (selectedTags.length > 0) {
+        setChartData(null);  // Clear existing chart data
         setFetchData(true);
+        setHasTimedOut(false); // Reset timeout state
+      } else {
+        message.warning('Please select at least one tag before fetching data.');
+      }
     };
 
     const chartContainerStyle: React.CSSProperties = {
@@ -128,33 +150,51 @@ const fetchTags = async (): Promise<Tag[]> => {
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
           <Select
             mode="multiple"
-            style={{ width: '800px' }}
+            style={{ width: '500px' }}
             placeholder="Select tags"
             onChange={setSelectedTags}
             value={selectedTags}
           >
-            {tags.map(tag => (
+            {tags.sort((a, b) => a.name.localeCompare(b.name)).map(tag => (
               <Option key={tag.name} value={tag.name}>{tag.name}</Option>
             ))}
           </Select>
-          <Button onClick={handleFetchData} style={{ marginLeft: '10px' }}>
-            Fetch Data
+          <Button 
+            onClick={handleFetchData} 
+            style={{ marginLeft: '10px' }} 
+            disabled={selectedTags.length === 0}  // Disable button if no tags are selected
+          >
+            Create Chart
           </Button>
         </div>
         <Row gutter={[16, 16]} style={{ margin: '10px', paddingBottom: '20px' }}>
-            <Col xs={24} sm={24}>
+          <Col xs={24} sm={24}>
             <div style={chartContainerStyle}>
-                {tsneQuery.isLoading ? (
-                <Spin size="large" /> // Large spinner centered in the container
-                ) : chartData ? (
-                <SimilrChart data={chartData} /> // Render chart with the current data
-                ) : (
-                <p style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)' }}>
-                    Select tags and click 'Fetch Data' to display the chart.
-                </p> // Message when there's no data yet
-                )}
+              {tsneQuery.isFetching && !hasTimedOut ? (
+                <div style={{ position: 'relative', width: 200, height: 200 }}>
+                  <Progress 
+                    type="circle" 
+                    percent={Math.min(progressPercent, 100)} // Ensure it doesn't go over 100%
+                    format={() => `${elapsedSeconds}s`} // Format as seconds
+                    style={{ position: 'absolute', bottom: '100px', width: '100%', textAlign: 'center', fontSize: '14px'}}
+                  />
+                  <p style={{ position: 'absolute', bottom: '10px', width: '100%', textAlign: 'center', fontSize: '14px'}}>
+                    This may take some time. It will timeout after 30 seconds.
+                  </p>
+                </div>
+              ) : hasTimedOut ? (
+                <p style={{ fontSize: '18px', position: 'absolute', top: '50%', transform: 'translateY(-50%)' }}>
+                  Loading timed out. Please try again or modify your query.
+                </p>
+              ) : chartData ? (
+                <SimilrChart data={chartData} />
+              ) : (
+                <p style={{ fontSize: '18px', position: 'absolute', top: '50%', transform: 'translateY(-50%)' }}>
+                  Select at least one tag and click 'Create Chart' to display the chart.
+                </p>
+              )}
             </div>
-            </Col>
+          </Col>
         </Row>
       </>
     );

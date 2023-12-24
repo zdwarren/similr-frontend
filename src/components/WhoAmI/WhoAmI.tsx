@@ -205,7 +205,12 @@ const WhoAmI = () => {
     }, []);
 
     // Function to format the name based on its type
-    const formatName = (name: any) => {
+    const formatName = (user: any) => {
+        // Check if user has a 'name' key
+        if (!user || !user.hasOwnProperty('name')) {
+            return ''; // Return empty string if 'name' key doesn't exist
+        }
+        const name = user.name;
         if (typeof name === 'object' && name !== null) {
             return `${name.first} ${name.last}`;
         } else if (typeof name === 'string') {
@@ -375,7 +380,7 @@ const WhoAmI = () => {
                                                 similarUsers?.slice(0, 10).map(user => (
                                                     <Row key={user.username} style={{ width: '100%' }}>
                                                         <Col span={16} style={{ textAlign: 'left' }}>
-                                                            <Tooltip title={formatName(user.name)}>
+                                                            <Tooltip title={formatName(user)}>
                                                                 <Tag style={{ marginBottom: '4px', fontSize: '14px' }} color="green">{user.username}</Tag>
                                                             </Tooltip>
                                                         </Col>
@@ -393,8 +398,8 @@ const WhoAmI = () => {
                                                 similarUsers?.slice(-10).map(user => (
                                                     <Row key={user.username} style={{ width: '100%' }}>
                                                         <Col span={16} style={{ textAlign: 'left' }}>
-                                                            <Tooltip title={user.name}>
-                                                                <Tag style={{ marginBottom: '4px', fontSize: '14px' }} color="volcano">{formatName(user.username)}</Tag>
+                                                            <Tooltip title={formatName(user)}>
+                                                                <Tag style={{ marginBottom: '4px', fontSize: '14px' }} color="volcano">{user.username}</Tag>
                                                             </Tooltip>
                                                         </Col>
                                                         <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
@@ -412,9 +417,7 @@ const WhoAmI = () => {
                                                 similarGroups?.slice(0, 10).map(user => (
                                                     <Row key={user.username} style={{ width: '100%' }}>
                                                         <Col span={16} style={{ textAlign: 'left' }}>
-                                                            <Tooltip title={formatName(user.name)}>
-                                                                <Tag style={{ marginBottom: '4px', fontSize: '14px' }} color="green">{user.username}</Tag>
-                                                            </Tooltip>
+                                                            <Tag style={{ marginBottom: '4px', fontSize: '14px' }} color="green">{user.username}</Tag>
                                                         </Col>
                                                         <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
                                                             {(user.score * 100).toFixed(0)}
@@ -430,9 +433,7 @@ const WhoAmI = () => {
                                                 similarGroups?.slice(-10).map(user => (
                                                     <Row key={user.username} style={{ width: '100%' }}>
                                                         <Col span={16} style={{ textAlign: 'left' }}>
-                                                            <Tooltip title={user.name}>
-                                                                <Tag style={{ marginBottom: '4px', fontSize: '14px' }} color="volcano">{formatName(user.username)}</Tag>
-                                                            </Tooltip>
+                                                            <Tag style={{ marginBottom: '4px', fontSize: '14px' }} color="volcano">{user.username}</Tag>
                                                         </Col>
                                                         <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
                                                             {(user.score * 100).toFixed(0)}
