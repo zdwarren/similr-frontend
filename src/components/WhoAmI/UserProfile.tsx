@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Row, Col, Avatar, Typography, Tag, Button, Badge, Select, Divider, Tooltip, Spin } from 'antd';
 import { CheckOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 const { Title } = Typography;
 
+interface TagInfo {
+    name: string;
+    is_private: boolean;
+}
 
-interface TagValue {
+interface Recommedation {
     title: string;
     description: string;
     score: number;
@@ -16,13 +20,50 @@ interface UserProfileData {
     username: string;
     questionsAnswered: number;
     rank: string;
-    personalityTags: TagValue[];
-    careerTags: TagValue[];
-    hogwartsHouse: TagValue;
-    dnd: TagValue[];
+    personalityRecs: Recommedation[];
+    careerRecs: Recommedation[];
+    hogwartsHouse: Recommedation;
+    dnd: Recommedation[];
     publicGroups: string[];
     privateGroups: string[];
 }
+
+const updateTags = async (tags: {publicGroups: string[], privateGroups: string[]}): Promise<void> => {
+    const authToken = localStorage.getItem('authToken');
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
+    const response = await fetch(`${backendUrl}api/updateTags/`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Token ${authToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(tags),
+    });
+
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    // No need to return anything for void
+};
+
+
+const fetchTags = async (): Promise<TagInfo[]> => {
+    const authToken = localStorage.getItem('authToken');
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const response = await fetch(`${backendUrl}api/tags/`, {
+        method: 'GET',
+        headers: {
+        'Authorization': `Token ${authToken}`,
+        'Content-Type': 'application/json',
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return response.json();
+};
 
 const fetchUserProfile = async (): Promise<UserProfileData> => {
     const authToken = localStorage.getItem('authToken');
@@ -41,12 +82,48 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
     return response.json();
   };
   
-const UserProfile = () => {
+  const UserProfile = () => {
     const [isEditingGroups, setIsEditingGroups] = useState(false);
+    const [editingPublicGroups, setEditingPublicGroups] = useState<string[]>([]);
+    const [editingPrivateGroups, setEditingPrivateGroups] = useState<string[]>([]);
 
-    const { data: userInfo, isLoading, isFetching } = useQuery('userProfile', fetchUserProfile);
+    const queryClient = useQueryClient();
 
-    if (isLoading || isFetching || !userInfo) {
+    const { data: userInfo, isLoading: isLoadingUserInfo } = useQuery<UserProfileData>('userProfile', fetchUserProfile, {
+        onSuccess: (data) => {
+            setEditingPublicGroups(data?.publicGroups || []);
+            setEditingPrivateGroups(data?.privateGroups || []);
+        },
+    });
+
+    const { data: tags, isLoading: isLoadingTags } = useQuery<TagInfo[]>('tags', fetchTags);
+
+    const mutation = useMutation<void, Error, {publicGroups: string[], privateGroups: string[]}>(updateTags, {
+        onSuccess: () => {
+            queryClient.setQueryData<UserProfileData>('userProfile', old => {
+                const updatedUserInfo = { ...old } as UserProfileData;
+                updatedUserInfo.publicGroups = editingPublicGroups; // Consider updating privateGroups as well
+                updatedUserInfo.privateGroups = editingPrivateGroups
+                // Implement any necessary updates or refreshes after successful mutation
+                return updatedUserInfo;
+            });
+            setIsEditingGroups(false); // Consider resetting both state variables
+        },
+    });
+    
+    const handleFinishEditing = () => {
+        // Collect and structure both public and private groups data
+        const tagsToUpdate = {
+            publicGroups: editingPublicGroups,
+            privateGroups: editingPrivateGroups,
+        };
+        mutation.mutate(tagsToUpdate); // Send the structured data to the mutation
+    };
+    
+
+    const isLoading = isLoadingUserInfo || isLoadingTags;
+
+    if (isLoading || !userInfo) {
         return (
             <Row justify="center" align="middle" style={{ height: "300px", width: "100%" }}>
                 <Col>
@@ -54,8 +131,9 @@ const UserProfile = () => {
                 </Col>
             </Row>
         );
+
     }
-  
+        
     // Style for larger tags
     const largerTagStyle = {
         fontSize: '13px', // Increase font size
@@ -71,6 +149,27 @@ const UserProfile = () => {
         padding: '2px 6px', // Increase padding for larger click area and visual size
         borderRadius: '7px', // Optional: for rounded corners
     };
+
+    const publicOptions = tags
+        ? [...tags] // Create a copy of the tags array
+            .filter(tag => !tag.is_private) // Filter out private tags
+            .sort((a, b) => a.name.localeCompare(b.name)) // Sort by name
+            .map(tag => ({ // Map to the desired structure
+                label: tag.name,
+                value: tag.name,
+            }))
+        : [];
+
+    
+    const privateOptions = tags
+        ? [...tags] // Create a copy of the tags array
+            .filter(tag => tag.is_private) // Filter for private tags
+            .sort((a, b) => a.name.localeCompare(b.name)) // Sort by name
+            .map(tag => ({ // Map to the desired structure
+                label: tag.name,
+                value: tag.name,
+            }))
+        : [];
 
     return (
     <>
@@ -88,7 +187,7 @@ const UserProfile = () => {
             {/* Top half for highest-ranking attributes */}
             <Row gutter={[0, 0]}>
                 <Col span={24}>
-                {userInfo.personalityTags.map(tag => (
+                {userInfo.personalityRecs?.map(tag => (
                     <Tooltip title={tag.description} key={tag.title}>
                         <Badge size="small" count={(tag.score * 1000).toFixed(0)} offset={[-15, 5]} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
                             <Tag color="blue" style={largerTagStyle}>{tag.title}</Tag>
@@ -97,7 +196,7 @@ const UserProfile = () => {
                 ))}
                 </Col>
                 <Col span={24}>
-                    {userInfo.careerTags.map(tag => (
+                    {userInfo.careerRecs?.map(tag => (
                         <Tooltip title={tag.description} key={tag.title}>
                             <Badge size="small" count={(tag.score * 1000).toFixed(0)} offset={[-15, 5]} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
                                 <Tag color="green" style={largerTagStyle}>{tag.title}</Tag>
@@ -115,7 +214,7 @@ const UserProfile = () => {
                 </Col>
                 <Col span={24}>
                     <strong>D&D: </strong>
-                    {userInfo.dnd.map(tag => (
+                    {userInfo.dnd?.map(tag => (
                         <Tooltip title={tag.description} key={tag.title}>
                             <Badge size="small" count={(tag.score * 1000).toFixed(0)} offset={[-15, 5]} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
                                 <Tag color="green" style={largerTagStyle}>{tag.title}</Tag>
@@ -129,21 +228,35 @@ const UserProfile = () => {
             <Row gutter={[12, 12]} style={{ marginTop: '20px' }}>
                 <Col span={24}>
                     <strong>Public Groups: </strong>
-                    {!isEditingGroups ?
-                        userInfo.publicGroups.map(group => <Tag style={groupTagStyle} key={group}>{group}</Tag>) :
-                        <Select mode="tags" style={{ width: '90%' }} placeholder="Public Groups">
-                            {/* Options could be fetched or defined elsewhere */}
-                        </Select>
-                    }
+                    {!isEditingGroups ? (
+                        userInfo.publicGroups?.sort().map(group => <Tag style={groupTagStyle} key={group}>{group}</Tag>)
+                        ) : (
+                        <Select
+                            mode="multiple"
+                            allowClear
+                            style={{ width: '90%' }}
+                            placeholder="Public Groups"
+                            defaultValue={editingPublicGroups.filter(group => !(tags || []).find(tag => tag.name === group)?.is_private)} 
+                            onChange={newTags => setEditingPublicGroups(newTags)}
+                            options={publicOptions} // use the publicOptions
+                        />
+                    )}
                 </Col>
                 <Col span={24}>
                     <strong>Private Groups: </strong>
-                    {!isEditingGroups ?
-                        userInfo.privateGroups.map(group => <Tag style={groupTagStyle} key={group}>{group}</Tag>) :
-                        <Select mode="tags" style={{ width: '90%' }} placeholder="Private Groups">
-                            {/* Options could be fetched or defined elsewhere */}
-                        </Select>
-                    }
+                    {!isEditingGroups ? (
+                        userInfo.privateGroups?.sort().map(group => <Tag style={groupTagStyle} key={group}>{group}</Tag>)
+                        ) : (
+                        <Select
+                            mode="multiple"
+                            allowClear
+                            style={{ width: '90%', zIndex: 1000 }}
+                            placeholder="Private Groups"
+                            defaultValue={userInfo.privateGroups?.filter(group => (tags || []).find(tag => tag.name === group)?.is_private)}
+                            onChange={newTags => setEditingPrivateGroups(newTags)}
+                            options={privateOptions}
+                        />
+                    )}
                 </Col>
             </Row>
             <Row>
@@ -152,7 +265,7 @@ const UserProfile = () => {
                         <Button
                             shape="circle"
                             icon={isEditingGroups ? <CheckOutlined /> : <EditOutlined />}
-                            onClick={() => setIsEditingGroups(!isEditingGroups)}
+                            onClick={() => isEditingGroups ? handleFinishEditing() : setIsEditingGroups(true)}
                         />
                     </Tooltip>
                 </Col>

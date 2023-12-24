@@ -303,7 +303,7 @@ const WhoAmI = () => {
                     <Card bordered={false}>
                         <Row gutter={[30, 30]}>
                             {/* First Column: Personality Profile and Similarity with Groups */}
-                            <Col span={10}>                               
+                            <Col span={10} style={{ marginRight: '-12px'}}>                               
                                 <Row style={cardStyle}>
                                     <UserProfile />
                                 </Row>

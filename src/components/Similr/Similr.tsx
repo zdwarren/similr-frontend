@@ -27,6 +27,11 @@ interface User {
   num_choices: number;
 }
 
+interface Tag {
+  name: string;
+  is_private: boolean;
+}
+
 const fetchUsernames = async (): Promise<User[]> => {
   const authToken = localStorage.getItem('authToken');
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
@@ -44,7 +49,7 @@ const fetchUsernames = async (): Promise<User[]> => {
   return response.json().then(users => users.sort((a: User, b: User) => a.username.toLowerCase().localeCompare(b.username.toLowerCase())));
 };
 
-const fetchTags = async (): Promise<string[]> => {
+const fetchTags = async (): Promise<Tag[]> => {
   const authToken = localStorage.getItem('authToken');
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
   const response = await fetch(`${backendUrl}api/tags/`, {
@@ -60,6 +65,7 @@ const fetchTags = async (): Promise<string[]> => {
   }
   return response.json();
 };
+
 
 const fetchTSNEData = async (tags: string[]): Promise<TSNEPoint[]> => {
   const authToken = localStorage.getItem('authToken');
@@ -132,7 +138,7 @@ const Similr = () => {
   const [selectedUsername, setSelectedUsername] = useState<string>(loggedInUsername || '');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [fetchData, setFetchData] = useState(true);
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
 
   useEffect(() => {
     // Fetch tags on component mount
@@ -209,8 +215,8 @@ const Similr = () => {
             onChange={setSelectedTags}
             value={selectedTags}
           >
-            {tags.sort().map(tag => (
-              <Option key={tag} value={tag}>{tag}</Option>
+            {tags.sort((a, b) => a.name.localeCompare(b.name)).map(tag => (
+              <Option key={tag.name} value={tag.name}>{tag.name}</Option>
             ))}
           </Select>
           <Button onClick={handleFetchData} style={{ marginLeft: '10px' }}>
