@@ -98,7 +98,6 @@ const fetchGroupRecommendations = async (url: string) => {
   };
 
 const heatmapLayout = {
-    title: 'Group Trait Heatmap',
     xaxis: { title: 'Members' },
     yaxis: { title: 'Traits' }
 };
@@ -195,19 +194,17 @@ const ComparePage = () => {
     
     const parseGroupRecommendationsForBarChart = (data: GroupMemberData[]) => {
         const sortedData = [...data].sort((a, b) => a.user_name.localeCompare(b.user_name));
-
-        const labels = sortedData.map(member => member.user_name);
     
-        // Assuming each member has the same set of recommendations
-        const allRecTitles = sortedData[0].recommendations.map(rec => rec.rec_title);
+        const allRecTitles = sortedData[0].recommendations.map(rec => rec.rec_title); // All available recommendation titles
+        const labels = allRecTitles;  // Labels are now recommendations
     
-        const datasets = allRecTitles.map((recTitle, index) => {
-            const colorIndex = index % chartColors.length;
+        // Create a dataset for each member
+        const datasets = sortedData.map((member, memberIndex) => {
+            const colorIndex = memberIndex % chartColors.length;
             return {
-                label: recTitle,
-                data: sortedData.map(member => {
-                    const rec = member.recommendations.find(rec => rec.rec_title === recTitle);
-                    return rec ? Math.round(rec.similarity_score * 1000) : 0;
+                label: member.user_name, // Each dataset is labeled by the member's name
+                data: member.recommendations.map(rec => {
+                    return Math.round(rec.similarity_score * 1000); // The data array contains a score for each recommendation
                 }),
                 backgroundColor: chartColors[colorIndex],
                 borderColor: chartColors[colorIndex].replace('0.2', '1'),
@@ -217,6 +214,7 @@ const ComparePage = () => {
     
         return { labels, datasets };
     };
+    
     
     const handleFetchData = async () => {
         if (!selectedTag || !selectedCategory) {
@@ -257,7 +255,7 @@ const ComparePage = () => {
             },
             tooltip: {
                 enabled: true,
-                mode: 'index',
+                mode: 'point',
                 intersect: false
             }
         },
@@ -310,34 +308,28 @@ const ComparePage = () => {
                 </Row>
                 
                 {/* Bar Chart Row */}
-                <Row gutter={[32, 32]} style={{ marginTop: '20px' }}>
+                <Row gutter={[32, 32]} style={{ marginTop: '40px' }}>
                     <Col span={24}>
-                        <Title level={4}>Trait Comparison</Title>
-                        <div style={{ height: '400px' }}> {/* Set a fixed height for the chart container */}
+                        <div style={{ height: '600px' }}> {/* Set a fixed height for the chart container */}
                             <Bar data={barChartData} options={barChartOptions} />
                         </div>
                     </Col>
                 </Row>
-
-                {/* Radar Chart Row */}
-                <Row gutter={[32, 32]} style={{ marginTop: '20px' }}>
-                    <Col span={24}>
-                        <Title level={4}>Personality Overlap</Title>
+                <Row gutter={[32, 32]} style={{ marginTop: '40px' }}>
+                    <Col span={11}>
                         <div style={{ width: '100%', margin: '0 auto' }}>
                             {!groupRecommendations ? <Spin /> : <Radar data={groupRecommendations} />}
                         </div>
                     </Col>
+                    <Col span={13}>
+                        <Plot
+                            data={heatmapData}
+                            layout={heatmapLayout}
+                            style={{ width: '100%' }} // Set a fixed height for the heatmap
+                        />
+                    </Col>
                 </Row>
-
             </Card>
-            <div>
-                <h2>Group Comparison Heatmap</h2>
-                <Plot
-                    data={heatmapData}
-                    layout={heatmapLayout}
-                    style={{ width: '100%' }} // Set a fixed height for the heatmap
-                />
-            </div>
         </>
     );
 };

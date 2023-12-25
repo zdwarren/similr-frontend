@@ -31,8 +31,8 @@ interface OptionPair {
     total_answered: number,
     milestone: number,
     current_accuracy: number | null;
-    left_famous_username: string;
-    right_famous_username: string;
+    left_famous_username: any;
+    right_famous_username: any;
 };
 
 const postUserChoice = async (userChoice: { option_pair: string; choice: string; }) => {

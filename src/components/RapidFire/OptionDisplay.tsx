@@ -8,7 +8,7 @@ interface OptionDisplayProps {
     relativeSimilarity: number;
     absoluteSimilarity: number;
     historicalPercent: number;
-    famousUsername: string;
+    famousUsername: any;
     onClick: () => void;
 }
 
@@ -98,6 +98,16 @@ const OptionDisplay: React.FC<OptionDisplayProps> = ({
         height: '100%', // Full height of card
     };
 
+    // Function to format the name based on its type
+    const formatName = (name: any) => {
+        if (typeof name === 'string') {
+            return name;
+        } else if (typeof name === 'object' && name !== null && 'first' in name && 'last' in name) {
+            return `${name.first} ${name.last}`;
+        }
+        return '';
+    };
+
     let cardContent;
 
     if (isLoading) {
@@ -116,7 +126,7 @@ const OptionDisplay: React.FC<OptionDisplayProps> = ({
                                 <div style={{ marginTop: '10px', fontSize: '24px', width: '100%', textAlign: 'center', color: 'rgba(0, 0, 0, 0.88)' }}>
                                 {historicalPercent.toFixed(0)}%
                                 <br />
-                                {famousUsername}
+                                {formatName(famousUsername)}
                                 </div>
                             )
                         }
