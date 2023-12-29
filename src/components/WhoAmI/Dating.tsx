@@ -92,7 +92,7 @@ const Dating = () => {
   };
   
   // Usage in your component
-  const scaledScore = scaleCompatibilityScore(compatibilityReport.compatibility_score);
+  const scaledScore = scaleCompatibilityScore(compatibilityReport?.compatibility_score);
 
   return (
     <Spin size='large' spinning={isLoadingUsernames || loading}>

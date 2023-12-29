@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Row, Col, Avatar, Typography, Tag, Button, Badge, Select, Tooltip, Spin, TabsProps, Tabs, message } from 'antd';
+import { Row, Col, Avatar, Typography, Tag, Button, Badge, Select, Tooltip, Spin, TabsProps, Tabs } from 'antd';
 import { CheckOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import UserEnteredData from './UserEnteredData';
@@ -111,32 +111,32 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
         },
     });
         
-    const generateReports = async () => {
+    // const generateReports = async () => {
         
-        try {
-            const authToken = localStorage.getItem('authToken');
-            const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    //     try {
+    //         const authToken = localStorage.getItem('authToken');
+    //         const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
-            const response = await fetch(`${backendUrl}api/generate-profile-reports/`, {
-                method: 'POST', // or 'GET' if the endpoint is designed that way
-                headers: {
-                    'Authorization': `Token ${authToken}`,
-                    'Content-Type': 'application/json',
-                },
-                // Include any necessary data in the body, if it's a POST request
-            });
+    //         const response = await fetch(`${backendUrl}api/generate-profile-reports/`, {
+    //             method: 'POST', // or 'GET' if the endpoint is designed that way
+    //             headers: {
+    //                 'Authorization': `Token ${authToken}`,
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             // Include any necessary data in the body, if it's a POST request
+    //         });
 
-            if (!response.ok) {
-                throw new Error('Failed to generate reports');
-            }
+    //         if (!response.ok) {
+    //             throw new Error('Failed to generate reports');
+    //         }
 
-            // Refresh user profile data
-            queryClient.invalidateQueries('userProfile');
-            message.success('Reports generated successfully!');
-        } catch (error) {
-            message.error(`Failed to generate reports`);
-        }
-    };
+    //         // Refresh user profile data
+    //         queryClient.invalidateQueries('userProfile');
+    //         message.success('Reports generated successfully!');
+    //     } catch (error) {
+    //         message.error(`Failed to generate reports`);
+    //     }
+    // };
     
     const handleFinishEditing = () => {
         // Collect and structure both public and private groups data
@@ -197,9 +197,9 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
         : [];
 
     // Define tabBarExtraContent with the Generate Reports button
-    const tabBarExtraContent = (
-        <Button onClick={generateReports}>Generate Reports</Button>
-    );
+    // const tabBarExtraContent = (
+    //     <Button onClick={generateReports}>Generate Reports</Button>
+    // );
 
     // Define the items for the tabs
     const items: TabsProps['items'] = [
@@ -326,6 +326,31 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
         },
     ];
 
+    // Define a function to determine rank and color
+    const determineRankAndColor = (questionsAnswered: number) => {
+        let rank, color;
+        if (questionsAnswered < 100) {
+            rank = "Novice";
+            color = "#2db7f5"; // Blue
+        } else if (questionsAnswered < 200) {
+            rank = "Intermediate";
+            color = "#f50"; // Red
+        } else if (questionsAnswered < 350) {
+            rank = "Bronze";
+            color = "#CD7F32"; // Bronze
+        } else if (questionsAnswered < 500) {
+            rank = "Silver";
+            color = "#c0c0c0"; // Silver
+        } else {
+            rank = "Gold";
+            color = "#ffd700"; // Gold
+        }
+        return { rank, color };
+    };
+
+    // Extract the rank and color based on questionsAnswered count
+    const { rank, color } = determineRankAndColor(userInfo?.questionsAnswered);
+
     return (
         <>
             <Col span={7} style={{ textAlign: 'center' }}>
@@ -333,13 +358,13 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
                 <Title level={4} style={{ marginTop: '10px' }}>{userInfo.username}</Title>
                 <Badge 
                     size='default'
-                    count={`${userInfo.rank} (${userInfo.questionsAnswered})`}
-                    style={{ padding: '0px 20px', fontSize: '14px', backgroundColor: '#faad14' }}
+                    count={`${rank} (${userInfo.questionsAnswered})`}
+                    style={{ padding: '0px 20px', fontSize: '14px', backgroundColor: color }}
                     title={`${userInfo.questionsAnswered} Questions Answered`}
                 />
             </Col>
             <Col span={17}>
-                <Tabs size="small" defaultActiveKey="1" items={items} tabBarExtraContent={tabBarExtraContent} />
+                <Tabs size="small" defaultActiveKey="1" items={items} />
             </Col>
         </>
     );

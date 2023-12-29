@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Input, Button, Row, Col, Tooltip } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Input, Button, Row, Col, Tooltip, message } from 'antd';
 import { EditOutlined, CheckOutlined } from '@ant-design/icons';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 // Interface for Demographics Section
 interface Demographics {
@@ -20,7 +21,6 @@ interface Demographics {
   interface WorkHistory {
     current_occupation: string;
     industry: string;
-    professional_skills: string[];
     career_goals: string;
   }
   
@@ -39,53 +39,81 @@ interface UserProfile {
     relationshipPreferences: RelationshipPreferences;
 }
 
-// Initial mock user data
-const initialProfileData: UserProfile = {
-    demographics: {
-      name: "Emily Stone",
-      age: 18,
-      gender_identity: "Female",
-      location: "Small Town, USA"
-    },
-    education: {
-      highest_level: "High School Diploma",
-      field_of_study: "General Education"
-    },
-    workHistory: {
-      current_occupation: "Aspiring Actress",
-      industry: "Entertainment",
-      professional_skills: ["Acting", "Singing"],
-      career_goals: "Become a famous Hollywood actress"
-    },
-    relationshipPreferences: {
-      past_relationships: "Mostly casual relationships",
-      desired_traits: "Fun-loving, Adventurous, No strings attached",
-      relationship_goals: "Casual dating, nothing serious at the moment"
-    }
-  };
+// Fetching user profile data
+const fetchUserProfile = async (): Promise<UserProfile> => {
+  const authToken = localStorage.getItem('authToken');
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  const response = await fetch(`${backendUrl}api/user-data-profile/`, {
+      headers: new Headers({
+          'Authorization': `Token ${authToken}`,
+      }),
+  });
+  if (!response.ok) throw new Error('Network response was not ok');
+  return response.json();
+};
+
+// Saving user profile data
+const saveUserProfile = async (updatedProfile: UserProfile) => {
+  const authToken = localStorage.getItem('authToken');
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  const response = await fetch(`${backendUrl}api/save-user-data-profile/`, {
+      method: 'PUT', // Or 'POST', depending on your backend
+      headers: new Headers({
+          'Authorization': `Token ${authToken}`,
+          'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify(updatedProfile),
+  });
+  if (!response.ok) throw new Error('Network response was not ok');
+  return response.json();
+};
 
 const UserEnteredData = () => {
-    // State for profile data and editing mode
-    const [profileData, setProfileData] = useState(initialProfileData);
+    const queryClient = useQueryClient(); // For invalidating and refetching queries
     const [isEditingProfile, setIsEditingProfile] = useState(false);
+    const [profileData, setProfileData] = useState<UserProfile | null>(null);
 
+    // Fetch User Profile Data from the backend
+    const { data: fetchedProfileData, isLoading, isError } = useQuery<UserProfile, Error>('userEnteredData', fetchUserProfile);
+
+    // Update local state when the fetched data changes
+    useEffect(() => {
+      if (fetchedProfileData) {
+          setProfileData(fetchedProfileData);
+      }
+    }, [fetchedProfileData]);
+
+    // Update User Profile Data
+    const mutation = useMutation(saveUserProfile, {
+        onSuccess: () => {
+            // Invalidate and refetch
+            queryClient.invalidateQueries('userProfile');
+            message.success('Profile updated successfully!');
+            setIsEditingProfile(false);
+        },
+    });
+
+    // Handle change function
     const handleProfileChange = (value: string | number | string[], section: keyof UserProfile, field: string) => {
-        // Update the state based on the type of value
+        if (!profileData) return;
         setProfileData({
             ...profileData,
             [section]: {
                 ...profileData[section],
-                [field]: value
-            }
+                [field]: value,
+            },
         });
     };
 
-    // Save profile data to the backend and exit editing mode
-    const handleFinishEditingProfile = () => {
-        // TODO: Implement saving logic
-        console.log("Saving profile data:", profileData);
-        setIsEditingProfile(false);
+    // Handle save function
+    const handleFinishEditingProfile = async () => {
+        if (!profileData) return;
+        mutation.mutate(profileData);
     };
+
+    if (isLoading) return <div>Loading...</div>;
+    if (isError) return <div>Error fetching the user profile.</div>;
+    if (!profileData) return <div>Profile data is not available.</div>;
 
     return (
         <Row gutter={[16, 16]}>
@@ -93,7 +121,7 @@ const UserEnteredData = () => {
           <Col span={24}>
             {!isEditingProfile ? (
               <Col span={24}>
-                {`${profileData.demographics.name}, ${profileData.demographics.age} years old, ${profileData.demographics.gender_identity}, ${profileData.demographics.location}`}
+                {`${profileData.demographics?.name}, ${profileData.demographics?.age} years old, ${profileData.demographics?.gender_identity}, ${profileData.demographics?.location}`}
               </Col>
             ) : (
                 <>
@@ -102,7 +130,7 @@ const UserEnteredData = () => {
                   <Col span={16}>
                     <Input
                       placeholder="Name"
-                      value={profileData.demographics.name}
+                      value={profileData.demographics?.name}
                       onChange={(e) => handleProfileChange(e.target.value, 'demographics', 'name')}
                     />
                   </Col>
@@ -112,7 +140,7 @@ const UserEnteredData = () => {
                   <Col span={16}>
                     <Input
                       placeholder="Age"
-                      value={profileData.demographics.age}
+                      value={profileData.demographics?.age}
                       onChange={(e) => handleProfileChange(e.target.value, 'demographics', 'age')}
                     />
                   </Col>
@@ -122,7 +150,7 @@ const UserEnteredData = () => {
                   <Col span={16}>
                     <Input
                     placeholder="Gender Identity"
-                    value={profileData.demographics.gender_identity}
+                    value={profileData.demographics?.gender_identity}
                     onChange={(e) => handleProfileChange(e.target.value, 'demographics', 'gender_identity')}
                     />
                   </Col>
@@ -132,7 +160,7 @@ const UserEnteredData = () => {
                   <Col span={16}>
                     <Input
                     placeholder="Location"
-                    value={profileData.demographics.location}
+                    value={profileData.demographics?.location}
                     onChange={(e) => handleProfileChange(e.target.value, 'demographics', 'location')}
                     />
                   </Col>
@@ -144,7 +172,7 @@ const UserEnteredData = () => {
           {/* User Education */}
           <Col span={24}>
                 {!isEditingProfile ? (
-                    <Col span={24}>{`${profileData.education.highest_level} in ${profileData.education.field_of_study}`}</Col>
+                    <Col span={24}>{`${profileData.education?.highest_level} in ${profileData.education?.field_of_study}`}</Col>
                 ) : (
                     <>
                         <Row>
@@ -152,7 +180,7 @@ const UserEnteredData = () => {
                             <Col span={16}>
                             <Input
                                 placeholder="Highest Level of Education"
-                                value={profileData.education.highest_level}
+                                value={profileData.education?.highest_level}
                                 onChange={(e) => handleProfileChange(e.target.value, 'education', 'highest_level')}
                             />
                             </Col>
@@ -162,7 +190,7 @@ const UserEnteredData = () => {
                             <Col span={16}>
                             <Input
                                 placeholder="Field of Study"
-                                value={profileData.education.field_of_study}
+                                value={profileData.education?.field_of_study}
                                 onChange={(e) => handleProfileChange(e.target.value, 'education', 'field_of_study')}
                             />
                             </Col>
@@ -176,9 +204,8 @@ const UserEnteredData = () => {
             {!isEditingProfile ? (
                 <Col span={24}>
                 <div>
-                    {`Current Occupation: ${profileData.workHistory.current_occupation}, Industry: ${profileData.workHistory.industry}`}
-                    <div>{`Skills: ${profileData.workHistory.professional_skills.join(", ")}`}</div>
-                    <div>{`Career Goals: ${profileData.workHistory.career_goals}`}</div>
+                    {`Current Occupation: ${profileData.workHistory?.current_occupation}, Industry: ${profileData.workHistory?.industry}`}
+                    <div>{`Career Goals: ${profileData.workHistory?.career_goals}`}</div>
                 </div>
                 </Col>
             ) : (
@@ -188,7 +215,7 @@ const UserEnteredData = () => {
                     <Col span={16}>
                     <Input
                         placeholder="Current Occupation"
-                        value={profileData.workHistory.current_occupation}
+                        value={profileData.workHistory?.current_occupation}
                         onChange={(e) => handleProfileChange(e.target.value, 'workHistory', 'current_occupation')}
                     />
                     </Col>
@@ -198,22 +225,8 @@ const UserEnteredData = () => {
                     <Col span={16}>
                     <Input
                         placeholder="Industry"
-                        value={profileData.workHistory.industry}
+                        value={profileData.workHistory?.industry}
                         onChange={(e) => handleProfileChange(e.target.value, 'workHistory', 'industry')}
-                    />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={8}><label>Professional Skills: </label></Col>
-                    <Col span={16}>
-                    <Input
-                        placeholder="Professional Skills (comma-separated)"
-                        value={profileData.workHistory.professional_skills.join(", ")}
-                        onChange={(e) => handleProfileChange(
-                        e.target.value.split(",").map(skill => skill.trim()),
-                        'workHistory',
-                        'professional_skills'
-                        )}
                     />
                     </Col>
                 </Row>
@@ -222,7 +235,7 @@ const UserEnteredData = () => {
                     <Col span={16}>
                     <Input
                         placeholder="Career Goals"
-                        value={profileData.workHistory.career_goals}
+                        value={profileData.workHistory?.career_goals}
                         onChange={(e) => handleProfileChange(e.target.value, 'workHistory', 'career_goals')}
                     />
                     </Col>
@@ -237,9 +250,9 @@ const UserEnteredData = () => {
                 {!isEditingProfile ? (
                     <Col span={24}>
                     <div>
-                        {`Past Relationships: ${profileData.relationshipPreferences.past_relationships}`}
-                        <div>{`Desired Traits: ${profileData.relationshipPreferences.desired_traits}`}</div>
-                        <div>{`Relationship Goals: ${profileData.relationshipPreferences.relationship_goals}`}</div>
+                        {`Past Relationships: ${profileData.relationshipPreferences?.past_relationships}`}
+                        <div>{`Desired Traits: ${profileData.relationshipPreferences?.desired_traits}`}</div>
+                        <div>{`Relationship Goals: ${profileData.relationshipPreferences?.relationship_goals}`}</div>
                     </div>
                     </Col>
                 ) : (
@@ -249,7 +262,7 @@ const UserEnteredData = () => {
                         <Col span={16}>
                         <Input
                             placeholder="Past Relationships"
-                            value={profileData.relationshipPreferences.past_relationships}
+                            value={profileData.relationshipPreferences?.past_relationships}
                             onChange={(e) => handleProfileChange(e.target.value, 'relationshipPreferences', 'past_relationships')}
                         />
                         </Col>
@@ -259,7 +272,7 @@ const UserEnteredData = () => {
                         <Col span={16}>
                         <Input
                             placeholder="Desired Traits"
-                            value={profileData.relationshipPreferences.desired_traits}
+                            value={profileData.relationshipPreferences?.desired_traits}
                             onChange={(e) => handleProfileChange(e.target.value, 'relationshipPreferences', 'desired_traits')}
                         />
                         </Col>
@@ -269,7 +282,7 @@ const UserEnteredData = () => {
                         <Col span={16}>
                         <Input
                             placeholder="Relationship Goals"
-                            value={profileData.relationshipPreferences.relationship_goals}
+                            value={profileData.relationshipPreferences?.relationship_goals}
                             onChange={(e) => handleProfileChange(e.target.value, 'relationshipPreferences', 'relationship_goals')}
                         />
                         </Col>

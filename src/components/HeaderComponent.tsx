@@ -56,14 +56,14 @@ const HeaderComponent: React.FC = () => {
                         <Menu.Item key="/recommendations">
                             <Link to="/recommendations">Recs</Link>
                         </Menu.Item>
-                        <Menu.Item key="/predict-choice">
+                        {/* <Menu.Item key="/predict-choice">
                             <Link to="/predict-choice">Predict</Link>
                         </Menu.Item>
                         <Menu.Item key="/topwords">
                             <Link to="/topwords">Words</Link>
-                        </Menu.Item>
+                        </Menu.Item> */}
                         <Menu.Item key="/meetpeople">
-                            <Link to="/meetpeople">Meet</Link>
+                            <Link to="/meetpeople">SimilrDate</Link>
                         </Menu.Item>
                     </>
                 )}
