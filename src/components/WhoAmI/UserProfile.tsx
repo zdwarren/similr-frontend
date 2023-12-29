@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Row, Col, Avatar, Typography, Tag, Button, Badge, Select, Divider, Tooltip, Spin } from 'antd';
+import { Row, Col, Avatar, Typography, Tag, Button, Badge, Select, Tooltip, Spin, TabsProps, Tabs, message } from 'antd';
 import { CheckOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import UserEnteredData from './UserEnteredData';
+import Dating from './Dating';
 
 const { Title } = Typography;
 
@@ -44,9 +46,7 @@ const updateTags = async (tags: {publicGroups: string[], privateGroups: string[]
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }
-    // No need to return anything for void
 };
-
 
 const fetchTags = async (): Promise<TagInfo[]> => {
     const authToken = localStorage.getItem('authToken');
@@ -110,6 +110,33 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
             setIsEditingGroups(false); // Consider resetting both state variables
         },
     });
+        
+    const generateReports = async () => {
+        
+        try {
+            const authToken = localStorage.getItem('authToken');
+            const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
+            const response = await fetch(`${backendUrl}api/generate-profile-reports/`, {
+                method: 'POST', // or 'GET' if the endpoint is designed that way
+                headers: {
+                    'Authorization': `Token ${authToken}`,
+                    'Content-Type': 'application/json',
+                },
+                // Include any necessary data in the body, if it's a POST request
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to generate reports');
+            }
+
+            // Refresh user profile data
+            queryClient.invalidateQueries('userProfile');
+            message.success('Reports generated successfully!');
+        } catch (error) {
+            message.error(`Failed to generate reports`);
+        }
+    };
     
     const handleFinishEditing = () => {
         // Collect and structure both public and private groups data
@@ -120,7 +147,6 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
         mutation.mutate(tagsToUpdate); // Send the structured data to the mutation
     };
     
-
     const isLoading = isLoadingUserInfo || isLoadingTags;
 
     if (isLoading || !userInfo) {
@@ -137,7 +163,7 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
     // Style for larger tags
     const largerTagStyle = {
         fontSize: '13px', // Increase font size
-        margin: '7px 5px',
+        margin: '2px 2px',
         padding: '2px 8px', // Increase padding for larger click area and visual size
         borderRadius: '7px', // Optional: for rounded corners
     };
@@ -160,7 +186,6 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
             }))
         : [];
 
-    
     const privateOptions = tags
         ? [...tags] // Create a copy of the tags array
             .filter(tag => tag.is_private) // Filter for private tags
@@ -171,107 +196,152 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
             }))
         : [];
 
+    // Define tabBarExtraContent with the Generate Reports button
+    const tabBarExtraContent = (
+        <Button onClick={generateReports}>Generate Reports</Button>
+    );
+
+    // Define the items for the tabs
+    const items: TabsProps['items'] = [
+        {
+            label: 'Personality',
+            key: '1',
+            children: (
+                // Personality related content
+                <Row gutter={[0, 0]}>
+                    <Col span={12}>
+                        <Title level={5} style={{ marginTop: '0px' }}>General</Title>
+                        {userInfo.personalityRecs?.slice(0, 5).map(tag => (
+                            <Col span={24} key={tag.title}>
+                                <Tooltip title={tag.description}>
+                                    <Tag color="blue" style={largerTagStyle}>{tag.title} ({(tag.score * 100).toFixed(0)})</Tag>
+                                </Tooltip>
+                            </Col>
+                        ))}
+                    </Col>
+                    <Col span={12}>
+                        <Title level={5} style={{ marginTop: '0px' }}>Specfic</Title>
+                        {userInfo.personalityRecs?.slice(5, 10).map(tag => (
+                            <Col span={24} key={tag.title}>
+                                <Tooltip title={tag.description}>
+                                    <Tag color="blue" style={largerTagStyle}>{tag.title} ({(tag.score * 100).toFixed(0)})</Tag>
+                                </Tooltip>
+                            </Col>
+                        ))}
+                    </Col>
+                </Row>
+            ),
+        },
+        {
+            label: 'Career',
+            key: '2',
+            children: (
+                // Career related content
+                <Row gutter={[0, 0]}>
+                    <Col span={12}>
+                        <Title level={5} style={{ marginTop: '0px' }}>General</Title>
+                        {userInfo.careerRecs?.slice(0, 5).map(tag => (
+                            <Col span={24} key={tag.title}>
+                                <Tooltip title={tag.description}>
+                                    <Tag color="green" style={largerTagStyle}>{tag.title} ({(tag.score * 100).toFixed(0)})</Tag>
+                                </Tooltip>
+                            </Col>
+                        ))}
+                    </Col>
+                    <Col span={12}>
+                        <Title level={5} style={{ marginTop: '0px' }}>Specfic</Title>
+                        {userInfo.careerRecs?.slice(5, 10).map(tag => (
+                            <Col span={24} key={tag.title}>
+                                <Tooltip title={tag.description}>
+                                    <Tag color="green" style={largerTagStyle}>{tag.title} ({(tag.score * 100).toFixed(0)})</Tag>
+                                </Tooltip>
+                            </Col>
+                        ))}
+                    </Col>
+                </Row>
+            ),
+        },
+        {
+            label: 'Compatibility',
+            key: '3',
+            children: <Dating />,
+        },
+        {
+            label: 'Groups',
+            key: '4',
+            children: (
+                <>
+                    <Row gutter={[12, 12]} style={{ marginTop: '10px' }}>
+                        <Col span={24}>
+                            <strong>Public Groups: </strong>
+                            {!isEditingGroups ? (
+                                userInfo.publicGroups?.sort().map(group => <Tag style={groupTagStyle} key={group}>{group}</Tag>)
+                                ) : (
+                                <Select
+                                    mode="multiple"
+                                    allowClear
+                                    style={{ width: '90%' }}
+                                    placeholder="Public Groups"
+                                    defaultValue={editingPublicGroups.filter(group => !(tags || []).find(tag => tag.name === group)?.is_private)} 
+                                    onChange={newTags => setEditingPublicGroups(newTags)}
+                                    options={publicOptions} // use the publicOptions
+                                />
+                            )}
+                        </Col>
+                        <Col span={24}>
+                            <strong>Private Groups: </strong>
+                            {!isEditingGroups ? (
+                                userInfo.privateGroups?.sort().map(group => <Tag style={groupTagStyle} key={group}>{group}</Tag>)
+                                ) : (
+                                <Select
+                                    mode="multiple"
+                                    allowClear
+                                    style={{ width: '90%', zIndex: 1000 }}
+                                    placeholder="Private Groups"
+                                    defaultValue={userInfo.privateGroups?.filter(group => (tags || []).find(tag => tag.name === group)?.is_private)}
+                                    onChange={newTags => setEditingPrivateGroups(newTags)}
+                                    options={privateOptions}
+                                />
+                            )}
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={24} style={{ textAlign: 'right', marginTop: '-30px' }}>
+                            <Tooltip title={isEditingGroups ? "Finish Editing" : "Edit Groups"}>
+                                <Button
+                                    shape="circle"
+                                    icon={isEditingGroups ? <CheckOutlined /> : <EditOutlined />}
+                                    onClick={() => isEditingGroups ? handleFinishEditing() : setIsEditingGroups(true)}
+                                />
+                            </Tooltip>
+                        </Col>
+                    </Row>
+                </>
+            ),
+        },
+        {
+            label: 'Profile',
+            key: '5',
+            children: <UserEnteredData />
+        },
+    ];
+
     return (
-    <>
-        <Col span={7} style={{ textAlign: 'center' }}>
-            <Avatar size={128} icon={<UserOutlined />} style={{ margin: '0 auto' }} />
-            <Title level={4} style={{ marginTop: '10px' }}>{userInfo.username}</Title>
-            <Badge 
-                size='default'
-                count={`${userInfo.rank} (${userInfo.questionsAnswered})`}
-                style={{ padding: '0px 20px', fontSize: '14px', backgroundColor: '#faad14' }}
-                title={`${userInfo.questionsAnswered} Questions Answered`}
-            />
-        </Col>
-        <Col span={17}>
-            {/* Top half for highest-ranking attributes */}
-            <Row gutter={[0, 0]}>
-                <Col span={24}>
-                {userInfo.personalityRecs?.map(tag => (
-                    <Tooltip title={tag.description} key={tag.title}>
-                        <Badge size="small" count={(tag.score * 1000).toFixed(0)} offset={[-15, 5]} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
-                            <Tag color="blue" style={largerTagStyle}>{tag.title}</Tag>
-                        </Badge>
-                    </Tooltip>
-                ))}
-                </Col>
-                <Col span={24}>
-                    {userInfo.careerRecs?.map(tag => (
-                        <Tooltip title={tag.description} key={tag.title}>
-                            <Badge size="small" count={(tag.score * 1000).toFixed(0)} offset={[-15, 5]} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
-                                <Tag color="green" style={largerTagStyle}>{tag.title}</Tag>
-                            </Badge>
-                        </Tooltip>
-                    ))}
-                </Col>
-                <Col span={24}>
-                    <strong>Hogwarts House: </strong>
-                    <Tooltip title={userInfo.hogwartsHouse.description} key={userInfo.hogwartsHouse.title}>
-                        <Badge size="small" count={(userInfo.hogwartsHouse.score * 1000).toFixed(0)} offset={[-15, 5]} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
-                            <Tag color="green" style={largerTagStyle}>{userInfo.hogwartsHouse.title}</Tag>
-                        </Badge>
-                    </Tooltip>
-                </Col>
-                <Col span={24}>
-                    <strong>D&D: </strong>
-                    {userInfo.dnd?.map(tag => (
-                        <Tooltip title={tag.description} key={tag.title}>
-                            <Badge size="small" count={(tag.score * 1000).toFixed(0)} offset={[-15, 5]} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
-                                <Tag color="green" style={largerTagStyle}>{tag.title}</Tag>
-                            </Badge>
-                        </Tooltip>
-                    ))}
-                </Col>
-            </Row>
-            <Divider />
-            {/* Bottom half for groups */}
-            <Row gutter={[12, 12]} style={{ marginTop: '20px' }}>
-                <Col span={24}>
-                    <strong>Public Groups: </strong>
-                    {!isEditingGroups ? (
-                        userInfo.publicGroups?.sort().map(group => <Tag style={groupTagStyle} key={group}>{group}</Tag>)
-                        ) : (
-                        <Select
-                            mode="multiple"
-                            allowClear
-                            style={{ width: '90%' }}
-                            placeholder="Public Groups"
-                            defaultValue={editingPublicGroups.filter(group => !(tags || []).find(tag => tag.name === group)?.is_private)} 
-                            onChange={newTags => setEditingPublicGroups(newTags)}
-                            options={publicOptions} // use the publicOptions
-                        />
-                    )}
-                </Col>
-                <Col span={24}>
-                    <strong>Private Groups: </strong>
-                    {!isEditingGroups ? (
-                        userInfo.privateGroups?.sort().map(group => <Tag style={groupTagStyle} key={group}>{group}</Tag>)
-                        ) : (
-                        <Select
-                            mode="multiple"
-                            allowClear
-                            style={{ width: '90%', zIndex: 1000 }}
-                            placeholder="Private Groups"
-                            defaultValue={userInfo.privateGroups?.filter(group => (tags || []).find(tag => tag.name === group)?.is_private)}
-                            onChange={newTags => setEditingPrivateGroups(newTags)}
-                            options={privateOptions}
-                        />
-                    )}
-                </Col>
-            </Row>
-            <Row>
-                <Col span={24} style={{ textAlign: 'right', marginTop: '-30px' }}>
-                    <Tooltip title={isEditingGroups ? "Finish Editing" : "Edit Groups"}>
-                        <Button
-                            shape="circle"
-                            icon={isEditingGroups ? <CheckOutlined /> : <EditOutlined />}
-                            onClick={() => isEditingGroups ? handleFinishEditing() : setIsEditingGroups(true)}
-                        />
-                    </Tooltip>
-                </Col>
-            </Row>
-        </Col>
-    </>
+        <>
+            <Col span={7} style={{ textAlign: 'center' }}>
+                <Avatar size={128} icon={<UserOutlined />} style={{ margin: '0 auto' }} />
+                <Title level={4} style={{ marginTop: '10px' }}>{userInfo.username}</Title>
+                <Badge 
+                    size='default'
+                    count={`${userInfo.rank} (${userInfo.questionsAnswered})`}
+                    style={{ padding: '0px 20px', fontSize: '14px', backgroundColor: '#faad14' }}
+                    title={`${userInfo.questionsAnswered} Questions Answered`}
+                />
+            </Col>
+            <Col span={17}>
+                <Tabs size="small" defaultActiveKey="1" items={items} tabBarExtraContent={tabBarExtraContent} />
+            </Col>
+        </>
     );
 };
 

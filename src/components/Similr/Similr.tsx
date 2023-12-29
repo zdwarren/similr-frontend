@@ -94,7 +94,7 @@ const columns = [
     title: 'Similr Score',
     dataIndex: 'score',
     key: 'score',
-    render: (text: number) => (text * 100).toFixed(0),
+    render: (text: number) => (text * 10).toFixed(0),
     sorter: (a: any, b: any) => a.score - b.score,
   },
 ];

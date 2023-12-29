@@ -4,11 +4,11 @@ import { Card, Row, Col, Spin, Typography, List, Tag, Divider, Select, Popover, 
 import HeaderComponent from '../HeaderComponent';
 import TabPane from 'antd/es/tabs/TabPane';
 import UserProfile from './UserProfile';
+import ReactMarkdown from 'react-markdown';
+import '../../App.css'; // Ensure the styles are imported
 
 const { Option } = Select;
-
-const { Title, Paragraph } = Typography;
-
+const { Title } = Typography;
 
 interface Recommendation {
     title: string;
@@ -169,30 +169,30 @@ const fetchPersonalityProfile = async (): Promise<PersonalityProfile> => {
 };
 
 const WhoAmI = () => {
-    const { data: wordRankings, isFetching: isFetchingWordRankings } = useQuery('wordRankings', fetchWordRankings);
+    const { data: wordRankings, isLoading: isFetchingWordRankings } = useQuery('wordRankings', fetchWordRankings);
     
     const {
         data: personalityProfile,
-        isFetching: isFetchingProfile,
+        isLoading: isFetchingProfile,
     } = useQuery('personalityProfile', fetchPersonalityProfile);
 
     const [selectedCategory, setSelectedCategory] = useState('General Personality');
     
     // Query for Combined Recommendations and Personality Traits
-    const { data: combinedRankings, isFetching: isFetchingRankings } = useQuery(
+    const { data: combinedRankings, isLoading: isFetchingRankings } = useQuery(
         ['rankings', selectedCategory],
         () => fetchRecommendations(selectedCategory),
         { keepPreviousData: true }
     );
 
     // Query for Similar Groups with proper type
-    const { data: similarGroups, isFetching: isFetchingSimilarGroups } = useQuery<SimilarUser[]>(
+    const { data: similarGroups, isLoading: isFetchingSimilarGroups } = useQuery<SimilarUser[]>(
         ['similarGroups'],
         () => fetchSimilarGroups([]),
     );
 
     // Query for Similar Users with proper type
-    const { data: similarUsers, isFetching: isFetchingSimilarUsers } = useQuery<SimilarUser[]>(
+    const { data: similarUsers, isLoading: isFetchingSimilarUsers } = useQuery<SimilarUser[]>(
         ['similarUsers'],
         () => fetchSimilarUsers([]),
     );
@@ -239,58 +239,58 @@ const WhoAmI = () => {
         {
             label: <span style={tabStyle}>Personality</span>,
             key: '1',
-            children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.personality}</Paragraph>,
+            children: <ReactMarkdown className="markdown">{personalityProfile?.personality}</ReactMarkdown>,
         },
         {
             label: <span style={tabStyle}>Career</span>,
             key: '2',
-            children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.career}</Paragraph>,
+            children: <ReactMarkdown className="markdown">{personalityProfile?.career}</ReactMarkdown>,
         },
         {
             label: <span style={tabStyle}>Matchmaker</span>,
             key: '3',
-            children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.matchmaker}</Paragraph>,
+            children: <ReactMarkdown className="markdown">{personalityProfile?.matchmaker}</ReactMarkdown>,
         },
-        {
-            label: <span style={tabStyle}>Personal Development</span>,
-            key: '4',
-            children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.personal_development_advice}</Paragraph>,
-        },
-        {
-            label: <span style={tabStyle}>Health</span>,
-            key: '5',
-            children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.health_advice}</Paragraph>,
-        },
-        {
-            label: <span style={tabStyle}>Social</span>,
-            key: '6',
-            children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.social_advice}</Paragraph>,
-        },
-        {
-            label: <span style={tabStyle}>Education</span>,
-            key: '7',
-            children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.education_advice}</Paragraph>,
-        },
-        {
-            label: <span style={tabStyle}>Lifestyle</span>,
-            key: '8',
-            children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.lifestyle_advice}</Paragraph>,
-        },
-        {
-            label: <span style={tabStyle}>Financial</span>,
-            key: '9',
-            children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.financial_advice}</Paragraph>,
-        },
-        {
-            label: <span style={tabStyle}>Creative</span>,
-            key: '10',
-            children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.creative_advice}</Paragraph>,
-        },
-        {
-            label: <span style={tabStyle}>Stress</span>,
-            key: '11',
-            children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.stress_advice}</Paragraph>,
-        }
+        // {
+        //     label: <span style={tabStyle}>Personal Development</span>,
+        //     key: '4',
+        //     children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.personal_development_advice}</Paragraph>,
+        // },
+        // {
+        //     label: <span style={tabStyle}>Health</span>,
+        //     key: '5',
+        //     children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.health_advice}</Paragraph>,
+        // },
+        // {
+        //     label: <span style={tabStyle}>Social</span>,
+        //     key: '6',
+        //     children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.social_advice}</Paragraph>,
+        // },
+        // {
+        //     label: <span style={tabStyle}>Education</span>,
+        //     key: '7',
+        //     children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.education_advice}</Paragraph>,
+        // },
+        // {
+        //     label: <span style={tabStyle}>Lifestyle</span>,
+        //     key: '8',
+        //     children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.lifestyle_advice}</Paragraph>,
+        // },
+        // {
+        //     label: <span style={tabStyle}>Financial</span>,
+        //     key: '9',
+        //     children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.financial_advice}</Paragraph>,
+        // },
+        // {
+        //     label: <span style={tabStyle}>Creative</span>,
+        //     key: '10',
+        //     children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.creative_advice}</Paragraph>,
+        // },
+        // {
+        //     label: <span style={tabStyle}>Stress</span>,
+        //     key: '11',
+        //     children: <Paragraph style={{ fontSize: '16px' }}>{personalityProfile?.stress_advice}</Paragraph>,
+        // }
     ];
 
         
@@ -308,7 +308,7 @@ const WhoAmI = () => {
                     <Card bordered={false}>
                         <Row gutter={[30, 30]}>
                             {/* First Column: Personality Profile and Similarity with Groups */}
-                            <Col span={10} style={{ marginRight: '-12px'}}>                               
+                            <Col span={13} style={{ marginRight: '-12px'}}>                               
                                 <Row style={cardStyle}>
                                     <UserProfile />
                                 </Row>
@@ -324,7 +324,7 @@ const WhoAmI = () => {
                             </Col>
 
                             {/* Merged Column: Rankings */}
-                            <Col span={6} style={cardStyle}>
+                            <Col span={5} style={cardStyle}>
                                 <Row justify="space-between" align="middle">
                                     <Col>
                                         <Title level={4} style={{ marginBottom: 0 }}>Rankings</Title>
@@ -343,7 +343,11 @@ const WhoAmI = () => {
                                 </Row>
                                 {isFetchingRankings ? <Spin style={{ marginLeft: '190px', marginTop: '100px'}} size="large" /> : (
                                     <List
-                                        style={{ marginTop: '7px' }}
+                                        style={{ 
+                                            maxHeight: '70vh', // Adjust based on your needs
+                                            overflowY: 'auto', // Enable vertical scrolling
+                                            marginTop: '7px'
+                                        }}
                                         size='small'
                                         dataSource={combinedRankings}
                                         renderItem={item => (
@@ -360,7 +364,7 @@ const WhoAmI = () => {
                                                     </Popover>
                                                     </Col>
                                                     <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                                                        {(item.similarity_score * 1000).toFixed(0)}
+                                                        {(item.similarity_score * 100).toFixed(0)}
                                                     </Col>
                                                 </Row>
                                             </List.Item>
@@ -369,7 +373,7 @@ const WhoAmI = () => {
                                 )}
                             </Col>
 
-                            <Col span={6} style={cardStyle}>
+                            <Col span={5} style={cardStyle}>
                                 <Card style={{ marginTop: '-20px'}} bordered={false}>
                                     <Tabs defaultActiveKey="1">
                                         <TabPane tab={<span style={tabStyle}>People</span>} key="1">
@@ -385,7 +389,7 @@ const WhoAmI = () => {
                                                             </Tooltip>
                                                         </Col>
                                                         <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                                                            {(user.score * 100).toFixed(0)}
+                                                            {(user.score * 10).toFixed(0)}
                                                         </Col>
                                                     </Row>
                                                 ))
@@ -403,7 +407,7 @@ const WhoAmI = () => {
                                                             </Tooltip>
                                                         </Col>
                                                         <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                                                            {(user.score * 100).toFixed(0)}
+                                                            {(user.score * 10).toFixed(0)}
                                                         </Col>
                                                     </Row>
                                                 ))
@@ -420,7 +424,7 @@ const WhoAmI = () => {
                                                             <Tag style={{ marginBottom: '4px', fontSize: '14px' }} color="green">{user.username}</Tag>
                                                         </Col>
                                                         <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                                                            {(user.score * 100).toFixed(0)}
+                                                            {(user.score * 10).toFixed(0)}
                                                         </Col>
                                                     </Row>
                                                 ))
@@ -436,7 +440,7 @@ const WhoAmI = () => {
                                                             <Tag style={{ marginBottom: '4px', fontSize: '14px' }} color="volcano">{user.username}</Tag>
                                                         </Col>
                                                         <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                                                            {(user.score * 100).toFixed(0)}
+                                                            {(user.score * 10).toFixed(0)}
                                                         </Col>
                                                     </Row>
                                                 ))
@@ -454,7 +458,7 @@ const WhoAmI = () => {
                                                             <Tag style={{ marginBottom: '4px', fontSize: '14px' }} color="green">{wordScore.word}</Tag>
                                                         </Col>
                                                         <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                                                            {(wordScore.similarity_score * 1000).toFixed(0)}
+                                                            {(wordScore.similarity_score * 100).toFixed(0)}
                                                         </Col>
                                                     </Row>
                                                 ))
@@ -470,7 +474,7 @@ const WhoAmI = () => {
                                                             <Tag style={{ marginBottom: '4px', fontSize: '14px' }} color="volcano">{wordScore.word}</Tag>
                                                         </Col>
                                                         <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                                                            {(wordScore.similarity_score * 1000).toFixed(0)}
+                                                            {(wordScore.similarity_score * 100).toFixed(0)}
                                                         </Col>
                                                     </Row>
                                                 ))

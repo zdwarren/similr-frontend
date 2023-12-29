@@ -13,6 +13,16 @@ interface User {
     num_choices: number;
 }
 
+interface OptionType {
+  title: string;
+  description: string;
+}
+
+// New interface for PairedOptionType
+interface PairedOptionType extends OptionType {
+  score: number;
+}
+
 // Fetch a list of usernames from the backend
 const fetchUsernames = async (): Promise<User[]> => {
     const authToken = localStorage.getItem('authToken');
@@ -34,40 +44,62 @@ const fetchUsernames = async (): Promise<User[]> => {
 
 const PredictChoice = () => {
   const [username, setUsername] = useState('');
-  const [leftOption, setLeftOption] = useState('');
-  const [rightOption, setRightOption] = useState('');
   const [loading, setLoading] = useState(false);
-  const [modelChoice, setModelChoice] = useState('');
-  
-  const [lrSimilarity, setLrSimilarity] = useState('');
-  const [rlSimilarity, setRlSimilarity] = useState('');
-  const [lSimilarity, setLSimilarity] = useState('');
-  const [rSimilarity, setRSimilarity] = useState('');
-
+  const [options, setOptions] = useState<OptionType[]>(new Array(5).fill({ title: '', description: '' }));
+  const [pairedOptions, setPairedOptions] = useState<PairedOptionType[]>([]);
+  const [scores, setScores] = useState<number[]>([]);
+  const [jsonInput, setJsonInput] = useState('');
   const { data: usernames } = useQuery('usernames', fetchUsernames);
+
+  const loadJson = () => {
+    try {
+      const jsonData = JSON.parse(jsonInput);
+      if (Array.isArray(jsonData)) {
+        if (jsonData.every(obj => obj.title && obj.description)) {
+          const newOptions = jsonData as OptionType[]; // cast it to the correct type
+  
+          // Update both options and pairedOptions
+          setOptions(newOptions);
+          const newPairedOptions = newOptions.map(option => ({ ...option, score: 0 })); // initialize scores as 0
+          setPairedOptions(newPairedOptions);
+        } else {
+          message.error("Each JSON object must have 'title' and 'description' fields.");
+        }
+      } else {
+        message.error("JSON must be an array of objects with 'title' and 'description' fields.");
+      }
+    } catch (error) {
+      message.error("Invalid JSON: " + error);
+    }
+  };  
 
   const handleSubmit = async () => {
     setLoading(true);
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL;
+      const bodyContent = {
+        username,
+        options: options,
+      };
       const response = await fetch(`${backendUrl}api/predict-choice/`, {
         method: 'POST',
         headers: {
           'Authorization': `Token ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, left_option: leftOption, right_option: rightOption }),
+        body: JSON.stringify(bodyContent),
       });
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
-      // const choice = data.choice[0].toUpperCase() + data.choice.slice(1);
-      setModelChoice(data.choice);
-      
-      // Save similarity scores in the state
-      setLrSimilarity((data.lr_similarity * 1000).toFixed(0));
-      setRlSimilarity((data.rl_similarity * 1000).toFixed(0));
-      setLSimilarity((data.l_similarity * 1000).toFixed(0));
-      setRSimilarity((data.r_similarity * 1000).toFixed(0));
+      setScores(data.scores);
+
+      // Pair options with their scores and sort
+      const newPairedOptions: PairedOptionType[] = options.map((option, index) => ({
+        ...option,
+        score: data.scores[index] || 0,
+      })).sort((a, b) => b.score - a.score);
+
+      setPairedOptions(newPairedOptions); // Update paired options with scores
 
     } catch (error) {
       message.error(`Error: ${error}`);
@@ -76,17 +108,25 @@ const PredictChoice = () => {
     }
   };
 
-  const getBorderColor = (option: string) => {
-    if (!modelChoice) return '';
-    return modelChoice === option ? 'green' : 'red';
+  // Function to add a new option
+  const addOption = () => {
+    setOptions([...options, { title: '', description: '' }]);
   };
-  
+
+  const updateOption = (index: number, value: string, field: keyof OptionType) => {
+    const updatedOptions = options.map((option, idx) => (
+      idx === index ? { ...option, [field]: value } : option
+    ));
+    setOptions(updatedOptions);
+  };
+
+    
   // Popover content
   const helpContent = (
     <div>
-      <p>Select a user, then type in your choices for the 'Left' and 'Right' options.</p>
-      <br />
-      <p>The top value next to each box is the relative score, indicating the likelihood of preference compared to the other option. The bottom value is the absolute score, representing the standalone preference score for each option, independent of the other choice.</p>
+      <p>Ranks free form text to see user preferences.</p>
+      <br></br>
+      <p>Use ChatGPT to generate JSON list of titles and descriptions.  Or just enter some options and select a user.</p>
     </div>
   );
 
@@ -123,29 +163,42 @@ const PredictChoice = () => {
                           ))}
                       </Select>
                       <Button type="primary" onClick={handleSubmit} loading={loading}>Predict Choice</Button>
+                      <Row justify="center" style={{ margin: '20px 0' }}>
+                        <Col span={12}>
+                          <TextArea
+                            rows={4}
+                            placeholder="Enter JSON here"
+                            value={jsonInput}
+                            onChange={(e) => setJsonInput(e.target.value)}
+                          />
+                        </Col>
+                      </Row>
+                      <Row justify="center" style={{ margin: '10px 0' }}>
+                        <Col>
+                          <Button onClick={loadJson}>Load JSON</Button>
+                        </Col>
+                      </Row>
                       <br /><br />
-                      <Row gutter={[16, 16]} align="middle" style={{ marginTop: '20px' }}>
-                          <Col span={4} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                              <div style={{ fontSize: '18px', textAlign: 'center', color: getBorderColor('right') }}>
-                                  {rlSimilarity}<br/>{rSimilarity}
+                      {
+                        pairedOptions.map((option, index) => (
+                          <Row gutter={[16, 16]} align="middle" key={index}>
+                            <Col span={24}>
+                              {/* Score now to the left of the title */}
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+                                <div style={{ fontSize: '17px', fontWeight: 'bold' }}>
+                                  {option.score ? `${(option.score * 1000).toFixed(0)} - ` : ''}  {option.title}
+                                </div>
                               </div>
-                          </Col>
-                          <Col span={20}>
-                              <TextArea rows={4} placeholder="Right Option" value={rightOption} onChange={e => setRightOption(e.target.value)} style={{ borderColor: getBorderColor('right') }} />
-                          </Col>
-                      </Row>
-                      <br />
-                      <Row gutter={[16, 16]} align="middle" style={{ marginTop: '20px' }}>
-                          <Col span={4} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                              <div style={{ fontSize: '18px', textAlign: 'center', color: getBorderColor('left') }}>
-                                  {lrSimilarity}<br/>{lSimilarity}
-                              </div>
-                          </Col>
-                          <Col span={20}>
-                              <TextArea rows={4} placeholder="Left Option" value={leftOption} onChange={e => setLeftOption(e.target.value)} style={{ borderColor: getBorderColor('left') }} />
-                          </Col>
-                      </Row>
-                      
+                              <TextArea
+                                rows={2}
+                                value={option.description}
+                                onChange={(e) => updateOption(index, e.target.value, 'description')}
+                                style={{ marginBottom: '10px', borderColor: option.score ? 'green' : undefined }}
+                              />
+                            </Col>
+                          </Row>
+                        ))
+                      }
                   </Card>
               </Col>
           </Row>

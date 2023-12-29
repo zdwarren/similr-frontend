@@ -17,9 +17,9 @@ const HeaderComponent: React.FC = () => {
     return (
         <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ color: 'white', fontSize: '24px' }}>
-                <Link to="/">
+                <Link to="/" style={{ color: 'lightgray', fontSize: '30px', fontWeight: '500' }}>
                     {/* <img src="path_to_your_logo.png" alt="Logo" style={{ height: '64px' }} /> */}
-                    <h1>Similr.ai</h1>
+                    <span>Similr.ai</span>
                 </Link>
             </div>
             <Menu
@@ -82,7 +82,7 @@ const HeaderComponent: React.FC = () => {
                 )}
             </Menu>
             <div style={{ textAlign: 'right', paddingRight: '10px' }}>
-                <span style={{ color: 'lightgray', fontWeight: 'bold', fontSize: '18px' }}>Beta</span>
+                <span style={{ color: 'lightgray', fontWeight: '500', fontSize: '24px' }}>Beta</span>
             </div>
         </Header>
     );

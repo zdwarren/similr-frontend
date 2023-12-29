@@ -7,3 +7,23 @@
   border-radius: 8px; /* optional: rounds the corners */
   background-color: white; /* optional: sets a background color */
 }
+
+/* globalStyles.css */
+.markdown p {
+  font-size: 15px; /* Larger text for paragraphs */
+}
+
+.markdown h1 {
+  font-size: 32px; /* Larger text for h1 headers */
+}
+
+.markdown h2 {
+  font-size: 24px; /* Larger text for h2 headers */
+}
+
+.markdown li {
+  font-size: 16px; /* Larger text for h2 headers */
+}
+
+/* ... and so on for other elements */
+
