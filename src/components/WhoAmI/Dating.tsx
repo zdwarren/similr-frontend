@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import { Select, Button, message, Spin, Card, List, Typography, Divider } from 'antd';
+import { Select, Button, message, Spin, Card, Typography } from 'antd';
 import { useQuery } from 'react-query';
 
 const { Title, Paragraph, Text } = Typography;
 
-interface CompatibilityReport {
-  shared_interests: string[];
-  potential_challenges: string[];
-  summary_statement: string;
-  detailed_analysis: string;
-  compatibility_score: string;
-  recommended_first_date: string;
-}
+// interface CompatibilityReport {
+//   shared_interests: string[];
+//   potential_challenges: string[];
+//   summary_statement: string;
+//   detailed_analysis: string;
+//   compatibility_score: string;
+//   recommended_first_date: string;
+// }
 
 interface User {
   username: string;
@@ -157,7 +157,7 @@ const Dating = () => {
           )}
       
         <Paragraph style={{ fontSize: '15px' }}>
-          <Text style={{ fontSize: '15px' }} strong>Recommended First Date:</Text> {compatibilityReport .recommended_first_date}
+          <Text style={{ fontSize: '15px' }} strong>Recommended First Date:</Text> {compatibilityReport.recommended_first_date}
         </Paragraph>
       </Card>
       )}

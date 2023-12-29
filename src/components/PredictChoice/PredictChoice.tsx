@@ -47,7 +47,6 @@ const PredictChoice = () => {
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState<OptionType[]>(new Array(5).fill({ title: '', description: '' }));
   const [pairedOptions, setPairedOptions] = useState<PairedOptionType[]>([]);
-  const [scores, setScores] = useState<number[]>([]);
   const [jsonInput, setJsonInput] = useState('');
   const { data: usernames } = useQuery('usernames', fetchUsernames);
 
@@ -91,7 +90,6 @@ const PredictChoice = () => {
       });
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
-      setScores(data.scores);
 
       // Pair options with their scores and sort
       const newPairedOptions: PairedOptionType[] = options.map((option, index) => ({
@@ -106,11 +104,6 @@ const PredictChoice = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Function to add a new option
-  const addOption = () => {
-    setOptions([...options, { title: '', description: '' }]);
   };
 
   const updateOption = (index: number, value: string, field: keyof OptionType) => {
