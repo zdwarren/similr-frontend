@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Spin } from 'antd';
+import { Card } from 'antd';
 
 interface OptionDisplayProps {
     option: string;
@@ -16,26 +16,9 @@ const OptionDisplay: React.FC<OptionDisplayProps> = ({
     option,
     optionImageUrl,
     isLoading,
-    // relativeSimilarity,
-    // absoluteSimilarity,
-    historicalPercent,
-    famousUsername,
+    // historicalPercent,
+    // famousUsername,
     onClick }) => {
-    
-    // Determine the color and text based on similarity value
-    // const similarityColor = relativeSimilarity >= 0 ? 'green' : 'red';
-    // let similarityText = '';
-    // if (relativeSimilarity < 0) {
-    //     similarityText = '';
-    // } else if (relativeSimilarity * 100 < 5) {
-    //     similarityText = 'Toss Up';
-    // } else if (relativeSimilarity * 100 > 20) {
-    //     similarityText = 'Very Confident';
-    // } else if (relativeSimilarity * 100 > 10) {
-    //     similarityText = 'Confident';
-    // } else {
-    //     similarityText = 'Lean';
-    // }
 
     const cardStyle: React.CSSProperties = {
         margin: '20px',
@@ -75,20 +58,20 @@ const OptionDisplay: React.FC<OptionDisplayProps> = ({
         fontWeight: '500', // Medium font weight, you can use 600 or 700 for bolder text
     };
 
-    const textStyle2: React.CSSProperties = {
-        textAlign: 'center',
-        width: '100%',
-        fontSize: '16px', // Increase font size
-        fontWeight: '500', // Medium font weight, you can use 600 or 700 for bolder text
-        color: 'rgba(0, 0, 0, 0.88)',
-        marginTop: '40px',
-    };
+    // const textStyle2: React.CSSProperties = {
+    //     textAlign: 'center',
+    //     width: '100%',
+    //     fontSize: '16px', // Increase font size
+    //     fontWeight: '500', // Medium font weight, you can use 600 or 700 for bolder text
+    //     color: 'rgba(0, 0, 0, 0.88)',
+    //     marginTop: '40px',
+    // };
 
-    const similarityStyle: React.CSSProperties = {
-        marginTop: '30px',
-        fontSize: '14px',
-        // color: similarityColor,
-    };
+    // const similarityStyle: React.CSSProperties = {
+    //     marginTop: '30px',
+    //     fontSize: '14px',
+    //     // color: similarityColor,
+    // };
 
     const spinnerContainerStyle: React.CSSProperties = {
         display: 'flex',
@@ -99,28 +82,23 @@ const OptionDisplay: React.FC<OptionDisplayProps> = ({
     };
 
     // Function to format the name based on its type
-    const formatName = (name: any) => {
-        if (typeof name === 'string') {
-            return name;
-        } else if (typeof name === 'object' && name !== null && 'first' in name && 'last' in name) {
-            return `${name.first} ${name.last}`;
-        }
-        return '';
-    };
+    // const formatName = (name: any) => {
+    //     if (typeof name === 'string') {
+    //         return name;
+    //     } else if (typeof name === 'object' && name !== null && 'first' in name && 'last' in name) {
+    //         return `${name.first} ${name.last}`;
+    //     }
+    //     return '';
+    // };
 
     let cardContent;
 
     if (isLoading) {
         cardContent = (
             <div style={spinnerContainerStyle}>
-                <Spin size='large' />
+                {/* <Spin size='large' />
                 {option && (
                     <div style={similarityStyle}>
-                        {/* <div style={{ fontSize: '14px', width: '100%', textAlign: 'center'}}>
-                            {(relativeSimilarity * 1000).toFixed(0)}
-                            {`  (${(absoluteSimilarity * 1000).toFixed(0)})`}
-                            {similarityText && ` - ${similarityText}`}
-                        </div> */}
                         {
                             (historicalPercent !== 0 && historicalPercent !== 100) && (
                                 <div style={{ marginTop: '10px', fontSize: '24px', width: '100%', textAlign: 'center', color: 'rgba(0, 0, 0, 0.88)' }}>
@@ -132,7 +110,7 @@ const OptionDisplay: React.FC<OptionDisplayProps> = ({
                         }
                         <p style={textStyle2}>{option}</p>
                     </div>
-                )}
+                )} */}
             </div>
         );
     } else {
