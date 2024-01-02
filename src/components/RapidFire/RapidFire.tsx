@@ -220,19 +220,30 @@ const RapidFire: React.FC = () => {
     
         return (
             <>
-                <Row justify="center" style={{ marginBottom: '10px' }}>
-                    <Col span={24} style={{ textAlign: 'center', marginBottom: '20px' }}>
+                <Row justify="center" style={{ marginBottom: '0px' }}>
+                    <Col span={24} style={{ textAlign: 'center' }}>
+                        <div style={{ marginBottom: '10px', fontSize: '20px', fontWeight: 700, fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>
+                            Insight Into You
+                        </div>
                         <div style={{ fontSize: '20px', fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>
                             {currentPair.display_text}
                         </div>
-                        <img src={currentPair.left_image_url} alt="Insight" style={{ maxWidth: '100%' }} />
-                        <div style={{ fontSize: '20px', fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>
-                            {currentPair.left}
-                        </div>
+                        <Row justify="center" style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
+                            <OptionDisplay
+                                option={currentPair?.left || 'Loading...'}
+                                optionImageUrl={currentPair?.left_image_url || ''}
+                                isLoading={isLoadingPair}
+                                relativeSimilarity={0}
+                                absoluteSimilarity={0}
+                                historicalPercent={0}
+                                famousUsername={null}
+                                onClick={() => refetchNextPair()}
+                            />
+                      </Row>
                     </Col>
                 </Row>
-                <Row justify="center">
-                    <Button onClick={() => refetchNextPair()}>Let's Keep Going!</Button>
+                <Row justify="center" style={{ marginBottom: '30px' }}>
+                    <Button size="large" onClick={() => refetchNextPair()}>Let's Keep Going!</Button>
                 </Row>
             </>
         );

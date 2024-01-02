@@ -1,20 +1,24 @@
 import React, { useState, useContext } from 'react';
-import { Button, Form, Input, Card } from 'antd';
+import { Button, Form, Input, Card, Select } from 'antd';
 import { AuthContext } from '../AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
+
+const { Option } = Select;
 
 const SignupForm: React.FC = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [signupCode, setSignupCode] = useState('');
+    const [pathType, setPathType] = useState('');
 
     const authContext = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        authContext.signup(username, password, signupCode).then(() => navigate('/rapidfire'));
+        // Modify to include pathType in the signup method
+        authContext.signup(username, password, signupCode, pathType).then(() => navigate('/rapidfire'));
     };
 
     return (
@@ -24,6 +28,21 @@ const SignupForm: React.FC = () => {
                     Create Your Similr Account
                 </h2>
                 <Form onSubmitCapture={handleSubmit} layout="vertical">
+                    <Form.Item
+                        name="pathType"
+                        rules={[{ required: true, message: 'Please select your Path!' }]}
+                    >
+                        <Select
+                            placeholder="Select your Path"
+                            onChange={value => setPathType(value)}
+                        >
+                            <Option value="dating">Dating</Option>
+                            <Option value="career_education">Career/Education</Option>
+                            <Option value="find_new_friends">Find New Friends</Option>
+                            <Option value="personality">Personality</Option>
+                            <Option value="relationship">Relationship</Option>
+                        </Select>
+                    </Form.Item>
                     <Form.Item
                         name="signupCode"
                         rules={[{ required: true, message: 'Please input your Signup Code!' }]}
