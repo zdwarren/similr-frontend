@@ -41,6 +41,9 @@ const HeaderComponent: React.FC = () => {
                         <Menu.Item key="/rapidfire">
                             <Link to="/rapidfire">Questions</Link>
                         </Menu.Item>
+                        <Menu.Item key="/results">
+                            <Link to="/results">Results</Link>
+                        </Menu.Item>
                         <Menu.Item key="/profile">
                             <Link to="/profile">Profile</Link>
                         </Menu.Item>

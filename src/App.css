@@ -25,5 +25,12 @@
   font-size: 16px; /* Larger text for h2 headers */
 }
 
-/* ... and so on for other elements */
+.ant-carousel .slick-dots li button {
+  background: #ff4ef6;
+  opacity: 0.4;
+}
 
+.ant-carousel .slick-dots li.slick-active button {
+  opacity: 1;
+  background: #ff4ef6;
+}

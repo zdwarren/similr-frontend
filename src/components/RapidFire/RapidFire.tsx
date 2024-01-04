@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Row, Col, Spin, Progress, Popover } from 'antd';
+import { Button, Row, Col, Spin, Progress, Popover, Form, Input, Alert } from 'antd';
 import OptionDisplay from './OptionDisplay';
 import HeaderComponent from '../HeaderComponent';
 import { useMutation, useQuery } from 'react-query';
@@ -10,6 +10,9 @@ import ThumbsFeedback from './ThumbsFeedback';
 export interface OptionPair {
     id: string;
     question_type: 'standard' | 'profile_option' | 'insight';
+    insight_category?: string;
+    insight_area?: string;
+    is_high?: boolean;    
     options?: string[];
     left: string;
     right: string;
@@ -120,7 +123,7 @@ const RapidFire: React.FC = () => {
 
     const renderQuestion = () => {
         if (!currentPair) {
-            return <Spin size="large" />;
+            return null; //<Spin size="large" />;
         }
 
         switch (currentPair.question_type) {
@@ -179,39 +182,114 @@ const RapidFire: React.FC = () => {
     };
 
     const renderProfileOptionQuestion = () => {
-        if (!currentPair || !currentPair.options) {
+        if (!currentPair) {
             return <div>Loading profile question...</div>;
         }
-
-        // Function to handle clicking an option
+    
+        // Function to handle clicking an option button
         const onOptionClick = (option: string) => {
             handleChoice(option);
         };
-
-        return (
-            <>
-                <Row justify="center" style={{ marginBottom: '10px' }}>
-                    <Col span={24} style={{ textAlign: 'center', marginBottom: '20px' }}>
-                        <div style={{ fontSize: '20px', fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>
-                            {currentPair?.display_text || currentPair?.prompt_template}
-                        </div>
-                    </Col>
-                </Row>
-                <Row justify="center" gutter={[0, 16]} style={{ marginBottom: '40px' }}>
-                    {currentPair.options.map((option, index) => (
-                        <Col key={index} span={24} style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Button
-                                style={{ width: '200px' }}
-                                onClick={() => onOptionClick(option)}
-                            >
-                                {option}
-                            </Button>
+    
+        const onTextInputSubmit = (values: any) => {
+            // values is an object where keys are the names of form items
+            const answerText = values.profileInput; // Assuming 'profileInput' is the name of your Form.Item
+            if (answerText) {
+                handleChoice(answerText);
+            }
+        };
+    
+        // Check if currentPair has options to display buttons, else display text input
+        if (currentPair.options && currentPair.options.length > 0) {
+            // Render buttons for each option
+            return (
+                <>
+                    <Row justify="center" style={{ marginBottom: '10px' }}>
+                        <Col span={24} style={{ textAlign: 'center', marginBottom: '20px' }}>
+                            <div style={{ fontSize: '20px', fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>
+                                {currentPair.display_text || currentPair.prompt_template}
+                            </div>
                         </Col>
-                    ))}
-                </Row>
-            </>
-        );
+                    </Row>
+                    <Row justify="center" gutter={[0, 16]} style={{ marginBottom: '40px' }}>
+                        {currentPair.options.map((option, index) => (
+                            <Col key={index} span={24} style={{ display: 'flex', justifyContent: 'center' }}>
+                                <Button style={{ width: '200px' }} onClick={() => onOptionClick(option)}>
+                                    {option}
+                                </Button>
+                            </Col>
+                        ))}
+                    </Row>
+                </>
+            );
+        } else {
+            // Render text input for free-form response
+            return (
+                <>
+                    <Row justify="center" style={{ marginBottom: '10px' }}>
+                        <Col span={24} style={{ textAlign: 'center', marginBottom: '20px' }}>
+                            <div style={{ fontSize: '20px', fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>
+                                {currentPair.display_text || currentPair.prompt_template}
+                            </div>
+                        </Col>
+                    </Row>
+                    <Row justify="center">
+                        <Col span={24} style={{ display: 'flex', justifyContent: 'center' }}>
+                            <Form onFinish={onTextInputSubmit}>
+                                <Form.Item name="profileInput">
+                                    <Input placeholder="Type your answer here" />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit" style={{ width: '200px' }}>
+                                        Submit
+                                    </Button>
+                                </Form.Item>
+                            </Form>
+                        </Col>
+                    </Row>
+                </>
+            );
+        }
     };
+    
+    const generateInsightText = (isHigh: boolean | undefined, category: string | undefined, area: string | undefined) => {
+        const highLowText = isHigh ? 'High' : 'Low';
+    
+        switch (category) {
+            case 'Personality':
+                return `You are ${highLowText} in ${area}`;
+            case 'Career':
+                if (isHigh)
+                    return `Recommended: ${area}`;
+                else
+                    return `Not Recommended: ${area}`;
+            case 'Hogwarts House':
+                if (isHigh)
+                    return `Hogwarts House: ${area}!`;
+                else
+                    return `Not Hogwarts House: ${area}`;
+            case 'Archetype':
+                if (isHigh)
+                    return `Archetype: ${area}`;
+                else
+                    return `Not Archetype: ${area}`;
+            case 'Hobby':
+            case 'Food':
+            case 'Music':
+            case 'Movie':
+            case 'TV':
+            case 'Gift Category':
+            case 'Automobile Brand':
+                if (isHigh)
+                    return `Predicted to like ${area}`;
+                else
+                    return `Predicted not to like ${area}`;        
+            case 'Famous Person':
+                return `${highLowText} Similarity to ${area}`;
+            default:
+                return `Your Insight in ${area}`;
+        }
+    };    
 
     const renderInsight = () => {
         if (!currentPair || currentPair.question_type !== 'insight') {
@@ -220,10 +298,13 @@ const RapidFire: React.FC = () => {
     
         return (
             <>
+                <Row justify="center" style={{ marginBottom: '20px' }}>
+                    <Alert message="The predictions will improve as you answer more questions." type="info" style={{ fontSize: '14px' }} />
+                </Row>
                 <Row justify="center" style={{ marginBottom: '0px' }}>
                     <Col span={24} style={{ textAlign: 'center' }}>
-                        <div style={{ marginBottom: '10px', fontSize: '20px', fontWeight: 700, fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>
-                            Insight Into You
+                        <div style={{ marginBottom: '10px', fontSize: '22px', fontWeight: 700, fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>
+                            {generateInsightText(currentPair.is_high, currentPair.insight_category, currentPair.insight_area)}
                         </div>
                         <div style={{ fontSize: '20px', fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>
                             {currentPair.display_text}
@@ -243,7 +324,7 @@ const RapidFire: React.FC = () => {
                     </Col>
                 </Row>
                 <Row justify="center" style={{ marginBottom: '30px' }}>
-                    <Button size="large" onClick={() => refetchNextPair()}>Let's Keep Going!</Button>
+                    <Button size="large" onClick={() => refetchNextPair()}>Keep Going!</Button>
                 </Row>
             </>
         );
@@ -281,26 +362,22 @@ const RapidFire: React.FC = () => {
                         setSelectedPromptTemplateId={setSelectedPromptTemplateId} />
                 )}
                 <Row gutter={16} justify="center" style={{ marginBottom: '20px' }}>
-                    <Col xs={2} sm={2} md={2} lg={2}>
-                    </Col>
-                    <Col xs={20} sm={18} md={16} lg={12}>
+                    <Col style={{ width: '50%' }}>
                         {currentPair && (
                             <Progress
                                 percent={Math.round(currentPair.progress)}
-                                format={() => `${currentPair.total_answered} / ${currentPair.milestone}`}
-                                showInfo={true}
                             />
                         )}
                     </Col>
-                    <Col xs={4} sm={6} md={8} lg={2} style={{ textAlign: 'right' }}>
+                    {/* <Col xs={4} sm={6} md={8} lg={2} style={{ textAlign: 'right' }}>
                         <SettingOutlined onClick={toggleSettings} style={{ fontSize: '22px', cursor: 'pointer' }} />
                         <Popover content={helpContent} title="How to Use This Page">
-                                <QuestionCircleOutlined style={{ marginLeft: '10px', cursor: 'pointer', position: 'relative', top: '-4px' }} />
+                            <QuestionCircleOutlined style={{ marginLeft: '10px', cursor: 'pointer', position: 'relative', top: '-4px' }} />
                         </Popover>
-                    </Col>
+                    </Col> */}
                 </Row>
                 {renderQuestion()}
-                {currentPair && (
+                {currentPair && currentPair.question_type == 'standard' && (
                     <ThumbsFeedback currentPair={currentPair} />
                 )}
             </div>

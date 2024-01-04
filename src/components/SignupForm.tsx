@@ -36,10 +36,10 @@ const SignupForm: React.FC = () => {
                             placeholder="Select your Path"
                             onChange={value => setPathType(value)}
                         >
-                            <Option value="dating">Dating</Option>
-                            <Option value="career_education">Career/Education</Option>
-                            <Option value="find_new_friends">Find New Friends</Option>
                             <Option value="personality">Personality</Option>
+                            <Option value="career_education">Career/Education</Option>
+                            <Option value="dating">Dating</Option>
+                            <Option value="find_new_friends">Find New Friends</Option>
                             <Option value="relationship">Relationship</Option>
                         </Select>
                     </Form.Item>

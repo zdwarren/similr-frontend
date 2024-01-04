@@ -24,6 +24,7 @@ type Score = {
 
 interface DataItem {
   username: string;
+  fullname: string;
   x: number;
   y: number;
   profile: any;
@@ -101,6 +102,7 @@ const SimilrChart = ({ data }: SimilrChartProps) => {
   
   // Create datasets
   const datasets: ChartDataset<'scatter', ScatterDataPoint[]>[] = data.map(user => {
+    const isCurrentUser = user.username === currentUser;
     const baseColor = colorMap[user.top_recommendation.title] || 'rgba(0, 0, 0, '; // Fallback color
     const opacity = 1;
     const color = `${baseColor}${opacity})`;
@@ -108,24 +110,28 @@ const SimilrChart = ({ data }: SimilrChartProps) => {
     return {
       label: user.username,
       data: [{ x: user.x, y: user.y }],
-      backgroundColor: user.username === currentUser ? 'rgba(255, 99, 132, 0.5)' : color,
-      pointRadius: 5
+      backgroundColor: color,
+      pointRadius: isCurrentUser ? 8 : 5 // Larger radius for current user
     };
   });
 
-  const annotations = data.map(user => ({
-    type: 'label' as const,
-    content: user.username,
-    xValue: user.x,
-    yValue: user.y,
-    backgroundColor: 'transparent',
-    font: {
-      size: 12
-    },
-    position: 'end' as const, // Change this to a simple string
-    xAdjust: -5,
-    yAdjust: 14
-  }));
+  const annotations = data.map(user => {
+    const isCurrentUser = user.username === currentUser;
+    return {
+      type: 'label' as const,
+      content: isCurrentUser ? "You" : user.fullname || 'Unknown',
+      xValue: user.x,
+      yValue: user.y,
+      backgroundColor: 'transparent',
+      font: {
+        size: isCurrentUser ? 15 : 12, // Larger font for current user
+        weight: isCurrentUser ? "700" : "300"
+      },
+      position: 'end' as const,
+      xAdjust: isCurrentUser ? -8 : -5,
+      yAdjust: isCurrentUser ? 15 : 14
+    };
+  });
 
   const chartData = {
     datasets: datasets

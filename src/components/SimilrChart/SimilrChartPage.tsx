@@ -1,6 +1,6 @@
 // SimilrChartPage.tsx
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Select, Button, message, Progress } from 'antd';
+import { Row, Col, Select, Button, message, Progress, Checkbox } from 'antd';
 import { useQuery } from 'react-query';
 import SimilrChart from './SimilrChart';
 import HeaderComponent from '../HeaderComponent';
@@ -9,6 +9,7 @@ const { Option } = Select;
 
 interface TSNEPoint {
     username: string;
+    fullname: string;
     x: number;
     y: number;
     z: number;
@@ -43,12 +44,14 @@ const fetchTags = async (): Promise<Tag[]> => {
     return response.json();
   };
   
-  const fetchTSNEData = async (tags: string[]): Promise<TSNEPoint[]> => {
+
+  const fetchTSNEData = async (tags: string[], includeYou: boolean): Promise<TSNEPoint[]> => {
     const authToken = localStorage.getItem('authToken');
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
     // Construct the tags part of the query string
     const tagsQueryString = tags.map(tag => `tags=${encodeURIComponent(tag)}`).join('&');
-    const response = await fetch(`${backendUrl}api/tsne/?${tagsQueryString}`, {
+    const includeYouQueryString = includeYou ? `&include_user=true` : '';
+    const response = await fetch(`${backendUrl}api/tsne/?${tagsQueryString}${includeYouQueryString}`, {
       method: 'GET',
       headers: {
         'Authorization': `Token ${authToken}`,
@@ -65,6 +68,7 @@ const fetchTags = async (): Promise<Tag[]> => {
 
   const SimilrChartPage = () => {
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [includeYou, setIncludeYou] = useState(false); // New state for checkbox
     const [tags, setTags] = useState<Tag[]>([]);
     const [fetchData, setFetchData] = useState(false);  
     const [hasTimedOut, setHasTimedOut] = useState(false);
@@ -73,7 +77,7 @@ const fetchTags = async (): Promise<Tag[]> => {
     const [chartData, setChartData] = useState<TSNEPoint[] | null>(null); // New state to hold chart data
 
     // Update TSNE query to depend only on fetchData
-    const tsneQuery = useQuery(['tsneData', selectedTags], () => fetchTSNEData(selectedTags), {
+    const tsneQuery = useQuery(['tsneData', selectedTags], () => fetchTSNEData(selectedTags, includeYou), {
       enabled: fetchData,  // Ensure query only runs when fetchData is true
       onSuccess: (data) => {
         setChartData(data);
@@ -159,6 +163,13 @@ const fetchTags = async (): Promise<Tag[]> => {
               <Option key={tag.name} value={tag.name}>{tag.name}</Option>
             ))}
           </Select>
+          <Checkbox
+            checked={includeYou}
+            onChange={e => setIncludeYou(e.target.checked)}
+            style={{ marginLeft: '10px' }}
+          >
+            Include You
+          </Checkbox>
           <Button 
             onClick={handleFetchData} 
             style={{ marginLeft: '10px' }} 

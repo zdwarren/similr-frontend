@@ -15,6 +15,7 @@ import MeetPeople from './components/MeetPeople/MeetPeople';
 import WhoAmI from './components/WhoAmI/WhoAmI';
 import Compare from './components/Compare/Compare';
 import SimilrChartPage from './components/SimilrChart/SimilrChartPage';
+import SlideshowPage from './components/Slideshow/SlideshowPage';
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/" element={isLoggedIn ? <Navigate to="/rapidfire" /> : <Landing />} />
         {/* <Route path="/profile" element={isLoggedIn ? <SimpleProfile /> : <Navigate to="/login" />} /> */}
         <Route path="/rapidfire" element={isLoggedIn ? <RapidFire /> : <Navigate to="/login" />} />
+        <Route path="/results" element={isLoggedIn ? <SlideshowPage /> : <Navigate to="/login" />} />
         <Route path="/profile" element={isLoggedIn ? <WhoAmI /> : <Navigate to="/login" />} />
         <Route path="/compare" element={isLoggedIn ? <Compare /> : <Navigate to="/login" />} />
         <Route path="/similr" element={isLoggedIn ? <Similr /> : <Navigate to="/login" />} />

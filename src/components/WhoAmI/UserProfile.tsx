@@ -214,7 +214,7 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
                         {userInfo.personalityRecs?.slice(0, 5).map(tag => (
                             <Col span={24} key={tag.title}>
                                 <Tooltip title={tag.description}>
-                                    <Tag color="blue" style={largerTagStyle}>{tag.title} ({(tag.score * 100).toFixed(0)})</Tag>
+                                    <Tag color="blue" style={largerTagStyle}>{tag.title} ({(tag.score * 1000).toFixed(0)})</Tag>
                                 </Tooltip>
                             </Col>
                         ))}
@@ -224,7 +224,7 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
                         {userInfo.personalityRecs?.slice(5, 10).map(tag => (
                             <Col span={24} key={tag.title}>
                                 <Tooltip title={tag.description}>
-                                    <Tag color="blue" style={largerTagStyle}>{tag.title} ({(tag.score * 100).toFixed(0)})</Tag>
+                                    <Tag color="blue" style={largerTagStyle}>{tag.title} ({(tag.score * 1000).toFixed(0)})</Tag>
                                 </Tooltip>
                             </Col>
                         ))}
@@ -243,7 +243,7 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
                         {userInfo.careerRecs?.slice(0, 5).map(tag => (
                             <Col span={24} key={tag.title}>
                                 <Tooltip title={tag.description}>
-                                    <Tag color="green" style={largerTagStyle}>{tag.title} ({(tag.score * 100).toFixed(0)})</Tag>
+                                    <Tag color="green" style={largerTagStyle}>{tag.title} ({(tag.score * 1000).toFixed(0)})</Tag>
                                 </Tooltip>
                             </Col>
                         ))}
@@ -253,7 +253,7 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
                         {userInfo.careerRecs?.slice(5, 10).map(tag => (
                             <Col span={24} key={tag.title}>
                                 <Tooltip title={tag.description}>
-                                    <Tag color="green" style={largerTagStyle}>{tag.title} ({(tag.score * 100).toFixed(0)})</Tag>
+                                    <Tag color="green" style={largerTagStyle}>{tag.title} ({(tag.score * 1000).toFixed(0)})</Tag>
                                 </Tooltip>
                             </Col>
                         ))}
@@ -335,10 +335,10 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
         } else if (questionsAnswered < 200) {
             rank = "Intermediate";
             color = "#f50"; // Red
-        } else if (questionsAnswered < 350) {
+        } else if (questionsAnswered < 300) {
             rank = "Bronze";
             color = "#CD7F32"; // Bronze
-        } else if (questionsAnswered < 500) {
+        } else if (questionsAnswered < 400) {
             rank = "Silver";
             color = "#c0c0c0"; // Silver
         } else {

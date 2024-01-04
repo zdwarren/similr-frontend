@@ -194,7 +194,7 @@ const WhoAmI = () => {
     // Query for Similar Users with proper type
     const { data: similarUsers, isLoading: isFetchingSimilarUsers } = useQuery<SimilarUser[]>(
         ['similarUsers'],
-        () => fetchSimilarUsers([]),
+        () => fetchSimilarUsers(["Famous"]),
     );
 
     const [categories, setCategories] = useState<string[]>([]);
@@ -364,7 +364,7 @@ const WhoAmI = () => {
                                                     </Popover>
                                                     </Col>
                                                     <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                                                        {(item.similarity_score * 100).toFixed(0)}
+                                                        {(item.similarity_score * 1000).toFixed(0)}
                                                     </Col>
                                                 </Row>
                                             </List.Item>
@@ -376,7 +376,7 @@ const WhoAmI = () => {
                             <Col span={5} style={cardStyle}>
                                 <Card style={{ marginTop: '-20px'}} bordered={false}>
                                     <Tabs defaultActiveKey="1">
-                                        <TabPane tab={<span style={tabStyle}>People</span>} key="1">
+                                        <TabPane tab={<span style={tabStyle}>Famous</span>} key="1">
                                             <Divider orientation="left">Most Similr</Divider>
                                             {isFetchingSimilarUsers ? (
                                                 <Spin size="small" style={{ marginLeft: 70 }} />
@@ -389,7 +389,7 @@ const WhoAmI = () => {
                                                             </Tooltip>
                                                         </Col>
                                                         <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                                                            {(user.score * 10).toFixed(0)}
+                                                            {(user.score * 100).toFixed(0)}
                                                         </Col>
                                                     </Row>
                                                 ))
@@ -407,7 +407,7 @@ const WhoAmI = () => {
                                                             </Tooltip>
                                                         </Col>
                                                         <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                                                            {(user.score * 10).toFixed(0)}
+                                                            {(user.score * 100).toFixed(0)}
                                                         </Col>
                                                     </Row>
                                                 ))
@@ -424,7 +424,7 @@ const WhoAmI = () => {
                                                             <Tag style={{ marginBottom: '4px', fontSize: '14px' }} color="green">{user.username}</Tag>
                                                         </Col>
                                                         <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                                                            {(user.score * 10).toFixed(0)}
+                                                            {(user.score * 100).toFixed(0)}
                                                         </Col>
                                                     </Row>
                                                 ))
@@ -440,7 +440,7 @@ const WhoAmI = () => {
                                                             <Tag style={{ marginBottom: '4px', fontSize: '14px' }} color="volcano">{user.username}</Tag>
                                                         </Col>
                                                         <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                                                            {(user.score * 10).toFixed(0)}
+                                                            {(user.score * 100).toFixed(0)}
                                                         </Col>
                                                     </Row>
                                                 ))
@@ -458,7 +458,7 @@ const WhoAmI = () => {
                                                             <Tag style={{ marginBottom: '4px', fontSize: '14px' }} color="green">{wordScore.word}</Tag>
                                                         </Col>
                                                         <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                                                            {(wordScore.similarity_score * 100).toFixed(0)}
+                                                            {(wordScore.similarity_score * 1000).toFixed(0)}
                                                         </Col>
                                                     </Row>
                                                 ))
@@ -474,7 +474,7 @@ const WhoAmI = () => {
                                                             <Tag style={{ marginBottom: '4px', fontSize: '14px' }} color="volcano">{wordScore.word}</Tag>
                                                         </Col>
                                                         <Col span={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                                                            {(wordScore.similarity_score * 100).toFixed(0)}
+                                                            {(wordScore.similarity_score * 1000).toFixed(0)}
                                                         </Col>
                                                     </Row>
                                                 ))
