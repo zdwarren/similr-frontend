@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { Card, Spin, Image, Col, Row } from 'antd';
+import { Card, Spin, Image, Col, Row, Alert } from 'antd';
 import Slide from './Slide';
 
 
@@ -10,18 +10,21 @@ interface OverviewSlideProps {
 }
 
 interface ResultsOverview {
-    headline1: string;
-    headline2: string;
-    headline3: string;
-    paragraph1: string;
-    paragraph2: string;
-    image_url: string;
+    headline1?: string;
+    headline2?: string;
+    headline3?: string;
+    paragraph1?: string;
+    paragraph2?: string;
+    image_url?: string;
+    message?: string;  // For handling loading or error messages
+    isLoadingOverview?: boolean; // For handling loading state
 }
 
-const fetchResultsOverview = async (overviewType: string): Promise<ResultsOverview> => {
+// Define fetch function outside with correct type definition
+async function fetchOverview(overviewType: string): Promise<ResultsOverview> {
     const authToken = localStorage.getItem('authToken');
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
-    const response = await fetch(`${backendUrl}api/results-overview/?type=${overviewType}`, { // Include the overview type in the query params
+    const response = await fetch(`${backendUrl}api/results-overview/?type=${overviewType}`, {
         method: 'GET',
         headers: {
             'Authorization': `Token ${authToken}`,
@@ -36,8 +39,16 @@ const fetchResultsOverview = async (overviewType: string): Promise<ResultsOvervi
 }
 
 const OverviewSlide: React.FC<OverviewSlideProps> = ({ overviewType, title }) => {
-    const { data, isLoading, error } = useQuery<ResultsOverview>(['resultsOverview', overviewType], () => fetchResultsOverview(overviewType));
 
+    const { data, isFetching, refetch } = useQuery<ResultsOverview>(
+        ['resultsOverview', overviewType],  // Unique key for the query
+        () => fetchOverview(overviewType),  // Fetch function
+        {
+            refetchInterval: (data) => (data?.isLoadingOverview ? 2000 : false), // Poll every 2 seconds only if it's loading
+            refetchIntervalInBackground: true, // Continue polling even if the window/tab is not active
+        }
+    );
+    
     const titleStyle: React.CSSProperties = {
         fontSize: '24px', // Bigger font size for the title
         textAlign: 'center', // Center the title text
@@ -45,15 +56,12 @@ const OverviewSlide: React.FC<OverviewSlideProps> = ({ overviewType, title }) =>
         padding: '20px',
     };
 
-    const contentStyle: React.CSSProperties = { display: 'flex', alignItems: 'flex-start' };
-    const textContentStyle: React.CSSProperties = { textAlign: 'left' };
     const imageStyle: React.CSSProperties = { width: '300px', height: '300px', borderRadius: '8px' };
 
     return (
         <Slide>
-            <Card title={<div style={titleStyle}>{title}</div>} bordered={false} style={{ width: '100%', maxWidth: '800px', margin: 'auto' }}>
-                {isLoading && <Spin size="large" />}
-                {data && (
+             <Card title={<div style={titleStyle}>{title}</div>} bordered={false} style={{ width: '100%', maxWidth: '800px', margin: 'auto' }}>
+                {!data?.isLoadingOverview && data?.headline1 && (
                     <Row align="top">
                         <Col span={24} style={{ textAlign: 'center' }}>
                             <h2 style={{ margin: '0' }}>{data.headline1}</h2>
@@ -68,6 +76,9 @@ const OverviewSlide: React.FC<OverviewSlideProps> = ({ overviewType, title }) =>
                             <p style={{ textAlign: 'left', fontSize: '15px' }}>{data.paragraph2}</p>
                         </Col>
                     </Row>
+                )}
+                {!data || data.isLoadingOverview && (
+                    <Spin size="large" />
                 )}
             </Card>
         </Slide>

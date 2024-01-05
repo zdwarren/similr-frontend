@@ -53,7 +53,9 @@ const postUserChoice = async (userChoice: { option_pair: string; choice: string;
     return response.json();
 };
 
-const RapidFire: React.FC = () => {    
+const RapidFire: React.FC = () => {
+    const username = localStorage.getItem('username') || "user";
+
     const [isLoadingPair, setIsLoadingPair] = useState(false);
     const [retainPrompt, setRetainPrompt] = useState(false);
     const [selectedPromptTemplateId, setSelectedPromptTemplateId] = useState<string | null>(null);
@@ -144,6 +146,31 @@ const RapidFire: React.FC = () => {
                 <Row gutter={16} justify="center" style={{ marginBottom: '10px' }}>
                     <Col xs={24} sm={24} md={20} lg={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ textAlign: 'center', fontSize: '20px', fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', flex: 1, marginRight: '10px' }}>
+                            {currentPair?.total_answered == 0 && (
+                                <Alert
+                                message={<strong>Welcome {username}!</strong>}
+                                description={(
+                                    <>
+                                        <p>
+                                            Thank you for taking the time to try out Similr.ai.
+                                            We hope you enjoy the questions and your report.
+                                            You will recieve insights along the way as we learn more about you.
+                                            Try to get to 400 questions but you can get your report early starting at 300 questions.
+                                        </p>
+                                        <p>
+                                            Try to be honest in your answers and don't overthink the questions.
+                                            You can skip if you have no preference.
+                                        </p>
+                                        <p>
+                                            The Personal Questions will aid in generating more personal results but feel free to select "Prefer Not to Say"
+                                        </p>
+                                        <p>It should take about 20-30 minutes to complete.</p>
+                                    </>
+                                )}
+                                type="success"
+                                style={{ marginBottom: '20px' }}
+                              />
+                            )}
                             {currentPair?.display_text || currentPair?.prompt_template}
                         </div>
                     </Col>
@@ -299,7 +326,7 @@ const RapidFire: React.FC = () => {
         return (
             <>
                 <Row justify="center" style={{ marginBottom: '20px' }}>
-                    <Alert message="The predictions will improve as you answer more questions." type="info" style={{ fontSize: '14px' }} />
+                    <Alert message="The predictions will improve as you answer more questions." type="success" style={{ fontSize: '14px' }} />
                 </Row>
                 <Row justify="center" style={{ marginBottom: '0px' }}>
                     <Col span={24} style={{ textAlign: 'center' }}>
@@ -352,7 +379,7 @@ const RapidFire: React.FC = () => {
     
     return (
         <>
-            <HeaderComponent />
+            {/* <HeaderComponent /> */}
             <div style={{ padding: '20px' }}>
                 {showSettings && (
                     <SettingsSection
