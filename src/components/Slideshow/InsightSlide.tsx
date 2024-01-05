@@ -4,6 +4,11 @@ import { Card, Carousel, Spin } from 'antd';
 import Slide from './Slide';
 import '../../App.css'; // Ensure the styles are imported
 
+interface InsightSlideProps {
+    insightCategory: string;  // Accepting insightCategory prop
+    title: string;
+}
+
 interface Insight {
     id: string,
     title: string;
@@ -12,12 +17,15 @@ interface Insight {
     insight_area: string,
     insight_category: string,
     is_high: boolean,
+    rank: number,
+    score: number
 }
 
-const fetchInsights = async (): Promise<Insight[]> => {
+// Update the fetchInsights function to accept insightCategory as a parameter
+const fetchInsights = async (insightCategory: string): Promise<Insight[]> => {
     const authToken = localStorage.getItem('authToken');
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
-    const response = await fetch(`${backendUrl}api/insights/`, {
+    const response = await fetch(`${backendUrl}api/insights/?category=${encodeURIComponent(insightCategory)}`, {
         method: 'GET',
         headers: {
             'Authorization': `Token ${authToken}`,
@@ -31,20 +39,18 @@ const fetchInsights = async (): Promise<Insight[]> => {
     return response.json();
 };
 
-const generateInsightText = (isHigh: boolean | undefined, category: string | undefined, area: string | undefined) => {
-    const highLowText = isHigh ? 'High' : 'Low';
+const generateInsightText = (
+    isHigh: boolean | undefined,
+    category: string | undefined,
+    area: string | undefined,
+    rank: number | undefined,
+    score: number | undefined) => {
 
     switch (category) {
-        case 'Personality':
-            return `You are ${highLowText} in ${area}`;
-        case 'Career':
-            if (isHigh)
-                return `Recommended: ${area}`;
-            else
-                return `Not Recommended: ${area}`;
         case 'Hogwarts House':
+        case 'D&D Class':
             if (isHigh)
-                return `Hogwarts House: ${area}!`;
+                return `You're a ${area}! (${score ? (score * 1000).toFixed(0) : ''})`;
             else
                 return `Not Hogwarts House: ${area}`;
         case 'Archetype':
@@ -60,11 +66,14 @@ const generateInsightText = (isHigh: boolean | undefined, category: string | und
         case 'Gift Category':
         case 'Automobile Brand':
             if (isHigh)
-                return `Predicted to like ${area}`;
+                return `${area}`;
             else
                 return `Predicted not to like ${area}`;        
-        case 'Famous Person':
-            return `${highLowText} Similarity to ${area}`;
+        case 'Famous People':
+            return `#${rank}: ${area} (${score ? (score * 100).toFixed(0) : ''})`;
+        case 'Personality':
+        case 'Career':
+            return `#${rank}: ${area} (${score ? (score * 1000).toFixed(0) : ''})`;
         default:
             return `Your Insight in ${area}`;
     }
@@ -102,19 +111,19 @@ const titleStyle: React.CSSProperties = {
     padding: '10px',
 };
 
-const InsightSlide: React.FC = () => {
-    const { data: insights, isLoading, error } = useQuery<Insight[]>('insights', fetchInsights);
+const InsightSlide: React.FC<InsightSlideProps> = ({ insightCategory, title }) => {
+    const { data: insights, isLoading, error } = useQuery<Insight[]>(['insights', insightCategory], () => fetchInsights(insightCategory));
 
     return (
         <Slide>
-            <Card title={<div style={titleStyle}>Your Insight Cards</div>} bordered={false} style={{ width: '100%', maxWidth: '600px', margin: 'auto', overflow: 'hidden' }}>
+            <Card title={<div style={titleStyle}>{title}</div>} bordered={false} style={{ width: '100%', maxWidth: '600px', margin: 'auto', overflow: 'hidden' }}>
                 {isLoading && <Spin size="large" />}
                 {insights && (
-                    <Carousel autoplay autoplaySpeed={5000}>
+                    <Carousel autoplay infinite={false} autoplaySpeed={5000}>
                         {insights.map((insight, index) => (
                             <div key={index} style={slideStyle}>
                                 <div style={{ marginBottom: '10px', fontSize: '22px', fontWeight: 700, fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>
-                                    {generateInsightText(insight.is_high, insight.insight_category, insight.insight_area)}
+                                    {generateInsightText(insight.is_high, insight.insight_category, insight.insight_area, insight.rank, insight.score)}
                                 </div>
                                 <img src={insight.image_url} alt={insight.title} style={imageStyle} />
                                 <p style={textStyle}>{insight.description}</p>

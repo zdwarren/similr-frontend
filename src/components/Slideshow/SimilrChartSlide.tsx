@@ -82,7 +82,7 @@ const SimilrChartSlide: React.FC = () => {
                 <div style={cardStyle}>
                     <Card 
                         style={chartContainerStyle} 
-                        title={<div style={titleStyle}>Your Similarity Chart</div>}
+                        title={<div style={titleStyle}>Similarity Chart</div>}
                     >
                         <p style={explanationTextStyle}>
                             Welcome to your similarity landscape! This chart is a magical space where each dot represents a famous

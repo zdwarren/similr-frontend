@@ -26,11 +26,11 @@
 }
 
 .ant-carousel .slick-dots li button {
-  background: #ff4ef6;
+  background: #777;
   opacity: 0.4;
 }
 
 .ant-carousel .slick-dots li.slick-active button {
   opacity: 1;
-  background: #ff4ef6;
+  background: #777;
 }
