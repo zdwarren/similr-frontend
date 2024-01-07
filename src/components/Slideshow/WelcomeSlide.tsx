@@ -52,18 +52,18 @@ const WelcomeSlide: React.FC<WelcomeSlideProps> = ({ username }) => {
 
   // Improved text content
   const slideContents = [
+    "Series of cards showing you how you rank in various aspects of personality and careers.",
+    "Compare yourself with a variety of renowned personalities and intriguing fictional characters.",
     "Dive deep into personalized insights about your personality, career aspirations, and relationships.",
-    "Compare yourself with a variety of renowned personalities or intriguing fictional characters.",
     "Explore tailored advice and exclusive AI-generated imagery that reflects your unique persona.",
-    "Anticipate how you rank in various aspects of life, awaiting you near the end of this journey.",
-    "Finally, explore a captivating map showcasing your alignment with well-known individuals, real and fictional."
+    "Enjoy your very own D&D, fantasy, and animal characters with unique images just for you!",
+    "Finally, examine a map showcasing your alignment with famous people, real and fictional."
   ];
 
   return (
     <Slide>
       {confettiPieces > 0 && <Confetti numberOfPieces={confettiPieces} />}
       <Card bordered={false} style={{ width: '100%', maxWidth: '700px', margin: 'auto', textAlign: 'center' }}>
-        <Alert message="The first few pages may take aorund 20 seconds to load." type="info" />
         <Title style={{ textAlign: 'center', marginBottom: '30px'  }} level={3}>Congratulations, {username}!</Title>
         <Paragraph style={{ textAlign: 'left', fontSize: '15px'  }} >We're currently processing the results to provide you with a unique and insightful experience. Here's a glimpse of what's to come:</Paragraph>
         <List

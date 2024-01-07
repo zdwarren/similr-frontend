@@ -6,6 +6,7 @@ import { useMutation, useQuery } from 'react-query';
 import { QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import SettingsSection from './SettingsSection';
 import ThumbsFeedback from './ThumbsFeedback';
+import { Link } from 'react-router-dom';
 
 export interface OptionPair {
     id: string;
@@ -241,7 +242,7 @@ const RapidFire: React.FC = () => {
                     <Row justify="center" gutter={[0, 16]} style={{ marginBottom: '40px' }}>
                         {currentPair.options.map((option, index) => (
                             <Col key={index} span={24} style={{ display: 'flex', justifyContent: 'center' }}>
-                                <Button style={{ width: '200px' }} onClick={() => onOptionClick(option)}>
+                                <Button style={{ width: '300px' }} onClick={() => onOptionClick(option)}>
                                     {option}
                                 </Button>
                             </Col>
@@ -404,6 +405,15 @@ const RapidFire: React.FC = () => {
                     </Col> */}
                 </Row>
                 {renderQuestion()}
+                {currentPair && currentPair.total_answered >= 300 && (
+                    <div style={{ textAlign: 'center', margin: '20px 0' }}>
+                        <Link to="/results">
+                            <Button size="large" type="primary">
+                                Go to Results!
+                            </Button>
+                        </Link>
+                    </div>
+                )}
                 {currentPair && currentPair.question_type == 'standard' && (
                     <ThumbsFeedback currentPair={currentPair} />
                 )}

@@ -2,11 +2,12 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import { Card, Carousel, Spin } from 'antd';
 import Slide from './Slide';
-import '../../App.css'; // Ensure the styles are imported
+import '../../App.css';
 
 interface InsightSlideProps {
-    insightCategory: string;  // Accepting insightCategory prop
+    insightCategory: string;
     title: string;
+    isPositive: boolean;
 }
 
 interface Insight {
@@ -22,10 +23,10 @@ interface Insight {
 }
 
 // Update the fetchInsights function to accept insightCategory as a parameter
-const fetchInsights = async (insightCategory: string): Promise<Insight[]> => {
+const fetchInsights = async (insightCategory: string, isPositive: boolean): Promise<Insight[]> => {
     const authToken = localStorage.getItem('authToken');
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
-    const response = await fetch(`${backendUrl}api/insights/?category=${encodeURIComponent(insightCategory)}`, {
+    const response = await fetch(`${backendUrl}api/insights/?category=${encodeURIComponent(insightCategory)}&is_positive=${isPositive}`, {
         method: 'GET',
         headers: {
             'Authorization': `Token ${authToken}`,
@@ -54,10 +55,7 @@ const generateInsightText = (
             else
                 return `Not Hogwarts House: ${area}`;
         case 'Archetype':
-            if (isHigh)
-                return `Archetype: ${area}`;
-            else
-                return `Not Archetype: ${area}`;
+            return `#${rank}: ${area} (${score ? (score * 1000).toFixed(0) : ''})`;
         case 'Hobby':
         case 'Food':
         case 'Music':
@@ -73,6 +71,9 @@ const generateInsightText = (
             return `#${rank}: ${area} (${score ? (score * 100).toFixed(0) : ''})`;
         case 'Personality':
         case 'Career':
+        case 'General Personality':
+        case 'General Career':
+        case 'Motivation':
             return `#${rank}: ${area} (${score ? (score * 1000).toFixed(0) : ''})`;
         default:
             return `Your Insight in ${area}`;
@@ -111,8 +112,8 @@ const titleStyle: React.CSSProperties = {
     padding: '10px',
 };
 
-const InsightSlide: React.FC<InsightSlideProps> = ({ insightCategory, title }) => {
-    const { data: insights, isLoading, error } = useQuery<Insight[]>(['insights', insightCategory], () => fetchInsights(insightCategory));
+const InsightSlide: React.FC<InsightSlideProps> = ({ insightCategory, title, isPositive }) => {
+    const { data: insights, isLoading, error } = useQuery<Insight[]>(['insights', insightCategory], () => fetchInsights(insightCategory, isPositive));
 
     return (
         <Slide>

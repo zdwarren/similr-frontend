@@ -22,8 +22,8 @@ const OptionDisplay: React.FC<OptionDisplayProps> = ({
 
     const cardStyle: React.CSSProperties = {
         margin: '20px',
-        width: '350px', // Fixed width
-        height: '450px', // Fixed height to accommodate image/text and spinner
+        width: '450px', // Fixed width
+        height: '550px', // Fixed height to accommodate image/text and spinner
         display: 'flex',
         flexDirection: 'column', // Stack children vertically
         alignItems: 'center', // Horizontally center children
@@ -35,7 +35,7 @@ const OptionDisplay: React.FC<OptionDisplayProps> = ({
 
     // Container for image to reserve the space
     const imageContainerStyle: React.CSSProperties = {
-        height: '300px', // Fixed height matching the max image height
+        height: '400px', // Fixed height matching the max image height
         width: '100%', // Full width of the card
         backgroundColor: '#f0f0f0', // A light grey placeholder color, adjust as needed
         display: 'flex',
