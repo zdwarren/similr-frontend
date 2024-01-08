@@ -67,7 +67,7 @@ const generateInsightText = (
                 return `${area}`;
             else
                 return `Predicted not to like ${area}`;        
-        case 'Famous People':
+        case 'Famous Person':
             return `#${rank}: ${area} (${score ? (score * 100).toFixed(0) : ''})`;
         case 'Personality':
         case 'Career':

@@ -45,9 +45,9 @@ interface ChartDataType {
 interface Tag {
     name: string;
     is_private: boolean;
-  }
+}
   
-  const fetchTags = async (): Promise<Tag[]> => {
+const fetchTags = async (): Promise<Tag[]> => {
     const authToken = localStorage.getItem('authToken');
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
     const response = await fetch(`${backendUrl}api/tags/`, {
@@ -62,7 +62,7 @@ interface Tag {
       throw new Error('Network response was not ok');
     }
     return response.json();
-  };
+};
   
 const fetchCategories = async (): Promise<string[]> => {
     const authToken = localStorage.getItem('authToken');

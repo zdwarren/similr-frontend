@@ -319,11 +319,11 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
                 </>
             ),
         },
-        {
-            label: 'Profile',
-            key: '5',
-            children: <UserEnteredData />
-        },
+        // {
+        //     label: 'Profile',
+        //     key: '5',
+        //     children: <UserEnteredData />
+        // },
     ];
 
     // Define a function to determine rank and color

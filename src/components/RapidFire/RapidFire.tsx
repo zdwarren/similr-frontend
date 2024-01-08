@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Row, Col, Spin, Progress, Popover, Form, Input, Alert } from 'antd';
+import { Button, Row, Col, Spin, Progress, Popover, Form, Input, Alert, Tooltip } from 'antd';
 import OptionDisplay from './OptionDisplay';
 import HeaderComponent from '../HeaderComponent';
 import { useMutation, useQuery } from 'react-query';
@@ -154,18 +154,18 @@ const RapidFire: React.FC = () => {
                                     <>
                                         <p>
                                             Thank you for taking the time to try out Similr.ai.
-                                            We hope you enjoy the questions and your report.
-                                            You will recieve insights along the way as we learn more about you.
-                                            Try to get to 400 questions but you can get your report early starting at 300 questions.
+                                            We hope you enjoy the questions and your unique-to-you report.
+                                            You will recieve insights along the way.
+                                            The goal is to get to 400 questions but you can go to your results at 300 questions.
                                         </p>
                                         <p>
                                             Try to be honest in your answers and don't overthink the questions.
                                             You can skip if you have no preference.
                                         </p>
                                         <p>
-                                            The Personal Questions will aid in generating more personal results but feel free to select "Prefer Not to Say"
+                                            The Personal Questions will aid in generating more personal results but feel free to select "Prefer Not to Say".
                                         </p>
-                                        <p>It should take about 20-30 minutes to complete.</p>
+                                        <p>It should take about <strong>20-30 minutes</strong> to complete.  We promise it will be worth your time!</p>
                                     </>
                                 )}
                                 type="success"
@@ -392,11 +392,14 @@ const RapidFire: React.FC = () => {
                 <Row gutter={16} justify="center" style={{ marginBottom: '20px' }}>
                     <Col style={{ width: '50%' }}>
                         {currentPair && (
-                            <Progress
-                                percent={Math.round(currentPair.progress)}
-                            />
+                            <Tooltip placement="right" title={`${currentPair.total_answered} / ${currentPair.milestone}`}>
+                                <Progress
+                                    percent={currentPair.progress > 99 && currentPair.progress < 100 ? 99 : Math.round(currentPair.progress)}
+                                />
+                            </Tooltip>
                         )}
                     </Col>
+
                     {/* <Col xs={4} sm={6} md={8} lg={2} style={{ textAlign: 'right' }}>
                         <SettingOutlined onClick={toggleSettings} style={{ fontSize: '22px', cursor: 'pointer' }} />
                         <Popover content={helpContent} title="How to Use This Page">

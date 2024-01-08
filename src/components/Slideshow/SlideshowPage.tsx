@@ -5,6 +5,9 @@ import HeaderComponent from '../HeaderComponent';
 import SimilrChartSlide from './SimilrChartSlide';
 import OverviewSlide from './OverviewSlide';
 import InsightSlide from './InsightSlide';
+import CompatibilitySlide from './CompatibilitySlide';
+import PrivateGroupSlide from './PrivateGroupSlide';
+import FeedbackSlide from './FeedbackSlide';
 
 const SlideshowPage = () => {
   // Assuming you have the username available
@@ -23,8 +26,8 @@ const SlideshowPage = () => {
         <InsightSlide insightCategory="General Career" title="General Career Recommendations" isPositive={true} />
         <InsightSlide insightCategory="Career" title="Not Recommended Careers" isPositive={false} />
         <InsightSlide insightCategory="Career" title="Recommended Careers" isPositive={true} />
-        <InsightSlide insightCategory="Famous People" title="Not Famous Similarities" isPositive={false} />
-        <InsightSlide insightCategory="Famous People" title="Famous Similarities" isPositive={true} />
+        <InsightSlide insightCategory="Famous Person" title="Not Famous Similarities" isPositive={false} />
+        <InsightSlide insightCategory="Famous Person" title="Famous Similarities" isPositive={true} />
         <InsightSlide insightCategory="Hogwarts House" title="Hogwarts House" isPositive={true} />
         <InsightSlide insightCategory="D&D Class" title="D&D Class" isPositive={true} />
         <OverviewSlide overviewType="personality" title="Personality Summary" />
@@ -35,7 +38,9 @@ const SlideshowPage = () => {
         <OverviewSlide overviewType="fantasy" title="Your Fantasy Character"/>
         <OverviewSlide overviewType="animal" title="What Animal Are You?"/>
         <SimilrChartSlide />
-        {/* Add more slides as necessary */}
+        <CompatibilitySlide />
+        <PrivateGroupSlide />
+        <FeedbackSlide />
       </SlideshowContainer>
     </>
   );
