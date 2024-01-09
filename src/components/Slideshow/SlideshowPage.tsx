@@ -35,7 +35,6 @@ const SlideshowPage = () => {
         <OverviewSlide overviewType="matchmaker" title="Matchmaker"/>
         <OverviewSlide overviewType="dating_profile" title="Dating Profile"/>
         <OverviewSlide overviewType="dnd" title="Your D&D Character"/>
-        <OverviewSlide overviewType="fantasy" title="Your Fantasy Character"/>
         <OverviewSlide overviewType="animal" title="What Animal Are You?"/>
         <SimilrChartSlide />
         <CompatibilitySlide />

@@ -65,7 +65,6 @@ const fetchCategories = async (): Promise<string[]> => {
     categories.push("Famous Person");
     categories.push("Animal");
     categories.push("D&D Character");
-    categories.push("Fantasy Character");
     categories.push("Personality Overview");
 
 
@@ -146,7 +145,7 @@ const PrivateGroupSlide = () => {
     };
 
     const formatInsightText = (insight: Insight) => {
-        const overviewCategories = ['Animal', 'D&D Character', 'Fantasy Character', 'Personality Overview'];
+        const overviewCategories = ['Animal', 'D&D Character', 'Personality Overview'];
         let scoreText = "";
     
         if (insight.insight_category === 'Famous Person') {
@@ -186,7 +185,7 @@ const PrivateGroupSlide = () => {
                         <Card 
                             title={result.fullname || result.username}
                             cover={
-                                result.id ? 
+                                result.title ? 
                                 <Image
                                     alt="Insight"
                                     src={result.image_url}
@@ -194,14 +193,15 @@ const PrivateGroupSlide = () => {
                                 <div style={placeholderImageStyle}>Not Generated Yet</div>
                             }
                         >
-                            {result.id ? (
+                            {result.title ? (
                                 <Popover
                                     content={
                                         <div style={{ maxWidth: '500px' }}>
+                                            <h4>{result.title}</h4>
                                             <p>{result.description}</p>
                                         </div>
                                     }
-                                    title={(result.fullname ? result.fullname : result.username) + ": " + result.title}
+                                    title={<h4 style={{ marginTop: 0 }}>{result.fullname ? result.fullname : result.username}</h4>}
                                 >
                                     <p style={textStyle}>{formatInsightText(result)}</p>
                                 </Popover>
