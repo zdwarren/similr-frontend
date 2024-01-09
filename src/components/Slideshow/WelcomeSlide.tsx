@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Slide from './Slide';
 import Confetti from 'react-confetti';
-import { Alert, Card, List, Typography } from 'antd';
+import { Card, List, Typography } from 'antd';
 const { Title, Paragraph } = Typography;
 
 interface WelcomeSlideProps {

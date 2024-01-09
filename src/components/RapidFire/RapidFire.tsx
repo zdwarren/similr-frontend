@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Row, Col, Spin, Progress, Popover, Form, Input, Alert, Tooltip } from 'antd';
+import { Button, Row, Col, Spin, Progress, Form, Input, Alert, Tooltip } from 'antd';
 import OptionDisplay from './OptionDisplay';
-import HeaderComponent from '../HeaderComponent';
 import { useMutation, useQuery } from 'react-query';
-import { QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import SettingsSection from './SettingsSection';
 import ThumbsFeedback from './ThumbsFeedback';
 import { Link } from 'react-router-dom';
@@ -147,7 +145,7 @@ const RapidFire: React.FC = () => {
                 <Row gutter={16} justify="center" style={{ marginBottom: '10px' }}>
                     <Col xs={24} sm={24} md={20} lg={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ textAlign: 'center', fontSize: '20px', fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', flex: 1, marginRight: '10px' }}>
-                            {currentPair?.total_answered == 0 && (
+                            {currentPair?.total_answered === 0 && (
                                 <Alert
                                 message={<strong>Welcome {username}!</strong>}
                                 description={(
@@ -359,20 +357,20 @@ const RapidFire: React.FC = () => {
     };
     
 
-    const helpContent = (
-        <div style={{ width: '600px'}}>
-            <p>Click on the image to make your choice.</p>
-            <p>If you absolutely have no preference or don't understand the question, feel free to <strong>Skip</strong>. Try to answer at least 100 pairs, but the more you answer, the better!</p>
-            <p>The <strong>thumbs up/down</strong> is for rating the options.  If you think it's a bad choice or confusing or the images are bad give it a thumbs down.</p>
-            <p>After you've clicked it will show you the overall % for all people who have answered and it might show a famous person's selection.</p>
-            <p>Once you've answered enough questions click on <strong>Profile</strong> to see your analysis!</p>
-        </div>
-    );
+    // const helpContent = (
+    //     <div style={{ width: '600px'}}>
+    //         <p>Click on the image to make your choice.</p>
+    //         <p>If you absolutely have no preference or don't understand the question, feel free to <strong>Skip</strong>. Try to answer at least 100 pairs, but the more you answer, the better!</p>
+    //         <p>The <strong>thumbs up/down</strong> is for rating the options.  If you think it's a bad choice or confusing or the images are bad give it a thumbs down.</p>
+    //         <p>After you've clicked it will show you the overall % for all people who have answered and it might show a famous person's selection.</p>
+    //         <p>Once you've answered enough questions click on <strong>Profile</strong> to see your analysis!</p>
+    //     </div>
+    // );
     
-    // Function to toggle settings visibility
-    const toggleSettings = () => {
-        setShowSettings(!showSettings);
-    };
+    // // Function to toggle settings visibility
+    // const toggleSettings = () => {
+    //     setShowSettings(!showSettings);
+    // };
 
     if (error) {
         return <div>Error</div>;
@@ -417,7 +415,7 @@ const RapidFire: React.FC = () => {
                         </Link>
                     </div>
                 )}
-                {currentPair && currentPair.question_type == 'standard' && (
+                {currentPair && currentPair.question_type === 'standard' && (
                     <ThumbsFeedback currentPair={currentPair} />
                 )}
             </div>

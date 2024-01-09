@@ -113,7 +113,7 @@ const titleStyle: React.CSSProperties = {
 };
 
 const InsightSlide: React.FC<InsightSlideProps> = ({ insightCategory, title, isPositive }) => {
-    const { data: insights, isLoading, error } = useQuery<Insight[]>(['insights', insightCategory], () => fetchInsights(insightCategory, isPositive));
+    const { data: insights, isLoading } = useQuery<Insight[]>(['insights', insightCategory], () => fetchInsights(insightCategory, isPositive));
 
     return (
         <Slide>

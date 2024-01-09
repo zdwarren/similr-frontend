@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from 'react-query';
-import { Card, Spin, Image, Col, Row, Alert } from 'antd';
+import { Card, Spin, Image, Col, Row } from 'antd';
 import Slide from './Slide';
 
 
@@ -40,7 +40,7 @@ async function fetchOverview(overviewType: string): Promise<ResultsOverview> {
 
 const OverviewSlide: React.FC<OverviewSlideProps> = ({ overviewType, title }) => {
 
-    const { data, isFetching, refetch } = useQuery<ResultsOverview>(
+    const { data } = useQuery<ResultsOverview>(
         ['resultsOverview', overviewType],  // Unique key for the query
         () => fetchOverview(overviewType),  // Fetch function
         {
@@ -77,7 +77,7 @@ const OverviewSlide: React.FC<OverviewSlideProps> = ({ overviewType, title }) =>
                         </Col>
                     </Row>
                 )}
-                {!data || data.isLoadingOverview && (
+                {(!data || data.isLoadingOverview) && (
                     <Spin size="large" />
                 )}
             </Card>
