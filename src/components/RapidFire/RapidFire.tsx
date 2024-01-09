@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Row, Col, Spin, Progress, Form, Input, Alert, Tooltip } from 'antd';
 import OptionDisplay from './OptionDisplay';
 import { useMutation, useQuery } from 'react-query';
-import SettingsSection from './SettingsSection';
+//import SettingsSection from './SettingsSection';
 import ThumbsFeedback from './ThumbsFeedback';
 import { Link } from 'react-router-dom';
 
@@ -56,17 +56,18 @@ const RapidFire: React.FC = () => {
     const username = localStorage.getItem('username') || "user";
 
     const [isLoadingPair, setIsLoadingPair] = useState(false);
-    const [retainPrompt, setRetainPrompt] = useState(false);
-    const [selectedPromptTemplateId, setSelectedPromptTemplateId] = useState<string | null>(null);
-    const [showSettings, setShowSettings] = useState(false);
+    // const [retainPrompt, setRetainPrompt] = useState(false);
+    // const [selectedPromptTemplateId, setSelectedPromptTemplateId] = useState<string | null>(null);
+    // const [showSettings, setShowSettings] = useState(false);
 
     const fetchNextOptionPair = async (): Promise<OptionPair> => {
         const authToken = localStorage.getItem('authToken');
         const backendUrl = process.env.REACT_APP_BACKEND_URL;
-        let url = `${backendUrl}api/option-pairs/next/?retainPrompt=${retainPrompt}`;
-        if (selectedPromptTemplateId) {
-            url += `&promptTemplateId=${selectedPromptTemplateId}`;
-        }
+        let url = `${backendUrl}api/option-pairs/next/`;
+        // let url = `${backendUrl}api/option-pairs/next/?retainPrompt=${retainPrompt}`;
+        // if (selectedPromptTemplateId) {
+        //     url += `&promptTemplateId=${selectedPromptTemplateId}`;
+        // }
     
         const response = await fetch(url, {
             method: 'GET',
@@ -92,7 +93,7 @@ const RapidFire: React.FC = () => {
 
     useEffect(() => {
         refetchNextPair();
-    }, [refetchNextPair, selectedPromptTemplateId]);
+    }, [refetchNextPair]);
     
     const mutation = useMutation(postUserChoice, {
         onMutate: () => {
@@ -380,13 +381,13 @@ const RapidFire: React.FC = () => {
         <>
             {/* <HeaderComponent /> */}
             <div style={{ padding: '20px' }}>
-                {showSettings && (
+                {/* {showSettings && (
                     <SettingsSection
                         retainPrompt={retainPrompt}
                         setRetainPrompt={setRetainPrompt}
                         selectedPromptTemplateId={selectedPromptTemplateId}
                         setSelectedPromptTemplateId={setSelectedPromptTemplateId} />
-                )}
+                )} */}
                 <Row gutter={16} justify="center" style={{ marginBottom: '20px' }}>
                     <Col style={{ width: '50%' }}>
                         {currentPair && (
