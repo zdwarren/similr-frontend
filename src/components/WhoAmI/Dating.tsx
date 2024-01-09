@@ -120,7 +120,7 @@ const Dating = () => {
           <Option key={user.username} value={user.username}>{user.username}</Option>
         ))}
       </Select>
-      <Button type="primary" onClick={fetchCompatibilityReport}>Create Report</Button>
+      <Button style={{ marginTop: '10px' }} type="primary" onClick={fetchCompatibilityReport}>Create Compatibility Report</Button>
       {compatibilityReport && (
         <Card bordered={false} style={{ width: '100%', marginTop: 10 }}>
         <Title level={4}>Compatibility Report: {scaledScore}/10</Title>

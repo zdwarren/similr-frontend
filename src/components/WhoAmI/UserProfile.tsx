@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Row, Col, Avatar, Typography, Tag, Button, Badge, Select, Tooltip, Spin, TabsProps, Tabs } from 'antd';
+import { Row, Col, Avatar, Typography, Tag, Button, Badge, Select, Tooltip, Spin, TabsProps, Tabs, Alert } from 'antd';
 import { CheckOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import UserEnteredData from './UserEnteredData';
+//import UserEnteredData from './UserEnteredData';
 import Dating from './Dating';
 
 const { Title } = Typography;
@@ -186,15 +186,15 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
             }))
         : [];
 
-    const privateOptions = tags
-        ? [...tags] // Create a copy of the tags array
-            .filter(tag => tag.is_private) // Filter for private tags
-            .sort((a, b) => a.name.localeCompare(b.name)) // Sort by name
-            .map(tag => ({ // Map to the desired structure
-                label: tag.name,
-                value: tag.name,
-            }))
-        : [];
+    // const privateOptions = tags
+    //     ? [...tags] // Create a copy of the tags array
+    //         .filter(tag => tag.is_private) // Filter for private tags
+    //         .sort((a, b) => a.name.localeCompare(b.name)) // Sort by name
+    //         .map(tag => ({ // Map to the desired structure
+    //             label: tag.name,
+    //             value: tag.name,
+    //         }))
+    //     : [];
 
     // Define tabBarExtraContent with the Generate Reports button
     // const tabBarExtraContent = (
@@ -273,6 +273,7 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
                 <>
                     <Row gutter={[12, 12]} style={{ marginTop: '10px' }}>
                         <Col span={24}>
+                            <Alert style={{ marginBottom: '20px' }} type='warning' message="Beta Users:  Ask Zac to add you to private groups." />
                             <strong>Public Groups: </strong>
                             {!isEditingGroups ? (
                                 userInfo.publicGroups?.sort().map(group => <Tag style={groupTagStyle} key={group}>{group}</Tag>)
@@ -290,9 +291,9 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
                         </Col>
                         <Col span={24}>
                             <strong>Private Groups: </strong>
-                            {!isEditingGroups ? (
-                                userInfo.privateGroups?.sort().map(group => <Tag style={groupTagStyle} key={group}>{group}</Tag>)
-                                ) : (
+                            {/* {!isEditingGroups ? ( */}
+                                {userInfo.privateGroups?.sort().map(group => <Tag style={groupTagStyle} key={group}>{group}</Tag>)}
+                                {/* ) : (
                                 <Select
                                     mode="multiple"
                                     allowClear
@@ -302,13 +303,14 @@ const fetchUserProfile = async (): Promise<UserProfileData> => {
                                     onChange={newTags => setEditingPrivateGroups(newTags)}
                                     options={privateOptions}
                                 />
-                            )}
+                            )} */}
                         </Col>
                     </Row>
                     <Row>
-                        <Col span={24} style={{ textAlign: 'right', marginTop: '-30px' }}>
+                        <Col span={24} style={{ textAlign: 'right', marginTop: 0 }}>
                             <Tooltip title={isEditingGroups ? "Finish Editing" : "Edit Groups"}>
                                 <Button
+                                    disabled
                                     shape="circle"
                                     icon={isEditingGroups ? <CheckOutlined /> : <EditOutlined />}
                                     onClick={() => isEditingGroups ? handleFinishEditing() : setIsEditingGroups(true)}

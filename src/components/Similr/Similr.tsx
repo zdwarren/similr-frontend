@@ -149,13 +149,8 @@ const Similr = () => {
   const helpContent = (
     <div>
       <p>This page gives you a general idea of how Similr you are to other people and what general grouping you belong in.</p>
-      <br />
       <p><strong>Tags:</strong> Filter down the users using the tags. See which Stranger Things character you are most similar to! Or see which Stranger Things character another person is similr to.</p>
-      <br />
       <p><strong>Similarity Table:</strong> Overall similarity of the users in the table to the user that is selected. Range goes from -100 to 100 with -100 being exact opposites and 100 being exactly the same. Anything over 50 is quite similar.</p>
-      <br />
-      <p><strong>2D Plot of Similarity:</strong> (Scroll Down) This attempts to plot all users on a 2D chart based on who they are closest to. It also shows the user's highest ranked trait out of ten personality traits.</p>
-      <br />
       <p><strong>Note:</strong> The questions are all fairly positive and are a self-assessment so if you are near a bad person it means you have similar positive personality traits to them.</p>
     </div>
   )

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Button, Form, Input, Card, Select } from 'antd';
+import { Button, Form, Input, Card, Select, Alert } from 'antd';
 import { AuthContext } from '../AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
@@ -53,6 +53,7 @@ const SignupForm: React.FC = () => {
                             onChange={(e) => setSignupCode(e.target.value)}
                         />
                     </Form.Item>
+                    <Alert style={{ marginBottom: '20px' }} type="info" message="username does not need to be your email" />
                     <Form.Item
                         name="username"
                         rules={[{ required: true, message: 'Please input your Username!' }]}

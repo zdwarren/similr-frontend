@@ -20,6 +20,7 @@ interface Insight {
     is_high: boolean;
     title: string;
     description: string;
+    description2: string;
     image_url: string;
     score: number;
     rank: number;
@@ -103,7 +104,7 @@ const PrivateGroupSlide = () => {
     const { data: groups, isLoading: isLoadingGroups } = useQuery('groups', fetchGroups);
     const { data: categories, isLoading: isLoadingCategories } = useQuery('categories', fetchCategories);
 
-    const overviewCategories = ["Animal", "D&D Character", "Fantasy Character", "Personality Overview"];
+    const overviewCategories = ["Animal", "D&D Character", "Personality Overview"];
     const regularCategories = categories?.slice()?.filter(category => !overviewCategories.includes(category));
     
     const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
@@ -196,9 +197,12 @@ const PrivateGroupSlide = () => {
                             {result.title ? (
                                 <Popover
                                     content={
-                                        <div style={{ maxWidth: '500px' }}>
+                                        <div style={{ maxWidth: '800px' }}>
                                             <h4>{result.title}</h4>
                                             <p>{result.description}</p>
+                                            {result.description2 && (
+                                                <p>{result.description2}</p>
+                                            )}
                                         </div>
                                     }
                                     title={<h4 style={{ marginTop: 0 }}>{result.fullname ? result.fullname : result.username}</h4>}

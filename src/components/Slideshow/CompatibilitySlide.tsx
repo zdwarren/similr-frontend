@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { Card, Spin, Image, Col, Row, Alert, Select, Button, Typography, message } from 'antd';
+import { Card, Spin, Col, Row, Select, Button, Typography, message } from 'antd';
 import Slide from './Slide';
 
 const { Title, Paragraph, Text } = Typography;
@@ -73,8 +73,8 @@ const CompatibilitySlide: React.FC = () => {
           const data = await response.json();
           setCompatibilityReport(data);
           message.success('Compatibility report generated successfully!');
-        } catch (error) {
-          message.error(`Failed to fetch compatibility report: ${error}`);
+        } catch (error: any) {
+          message.error(`Failed to fetch compatibility report: Famous person is missing matchmaker report.`);
         } finally {
           setLoading(false);
         }
@@ -102,8 +102,6 @@ const CompatibilitySlide: React.FC = () => {
         fontWeight: 'bold',
         padding: '20px',
     };
-
-    const imageStyle: React.CSSProperties = { width: '300px', height: '300px', borderRadius: '8px' };
 
     return (
         <Slide>
